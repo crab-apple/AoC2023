@@ -1,21 +1,23 @@
 package day1
 
-import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class Part1Test {
+class Part2Test {
 
     @Test
     fun example() {
         test(
             """
-                1abc2
-                pqr3stu8vwx
-                a1b2c3d4e5f
-                treb7uchet
+                two1nine
+                eightwothree
+                abcone2threexyz
+                xtwone3four
+                4nineeightseven2
+                zoneight234
+                7pqrstsixteen
                 """,
-            142
+            281
         )
     }
 
@@ -46,14 +48,19 @@ class Part1Test {
     }
 
     @Test
-    fun withNonDigits(){
+    fun withNonDigits() {
         test("foo1bar2baz", 12)
+    }
+
+    @Test
+    fun withNumbersAsWords() {
+        test("onetwo", 12)
     }
 
     private fun test(input: String, output: Int) {
         assertEquals(
             output,
-            Part1Solver.solve(input.trimIndent().lines())
+            Part2Solver.solve(input.trimIndent().lines())
         )
     }
 }
