@@ -8,4 +8,6 @@ fun main() {
     solve(input).println()
 }
 
-fun solve(input: List<String>) = input.size
+fun solve(input: List<String>): Int = input.sumOf { solveLine(it) }
+
+private fun solveLine(s: String) = s.first { it.isDigit() }.digitToInt() * 10 + s.last { it.isDigit() }.digitToInt()
