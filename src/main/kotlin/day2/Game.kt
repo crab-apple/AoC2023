@@ -6,6 +6,10 @@ class Game(val id: Int, private val samples: Set<Cubes>) {
         return samples.all { cubes.subsumes(it) }
     }
 
+    fun minimumPossibleBag(): Cubes {
+        return Cubes(Color.entries.associateWith { color -> this.samples.maxOf { it.get(color) } })
+    }
+
     companion object {
 
         fun parse(s: String): Game {

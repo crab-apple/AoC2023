@@ -11,6 +11,10 @@ class Cubes(private val data: Map<Color, Int>) {
         return Color.entries.all { this.get(it) >= other.get(it) }
     }
 
+    fun power(): Int {
+        return Color.entries.map { this.get(it) }.reduce { a, b -> a * b }
+    }
+
     companion object {
 
         fun parse(s: String): Cubes {
