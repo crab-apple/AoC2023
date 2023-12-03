@@ -1,9 +1,10 @@
 package day3
 
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class Part1Test {
+class Part2Test {
 
     val exampleInput = """
         467..114..
@@ -19,10 +20,10 @@ class Part1Test {
     """.trimIndent()
 
     @Test
-    fun testPart1() {
+    fun testPart2() {
         assertEquals(
-            4361,
-            Part1Solver.solve(exampleInput.lines())
+            467835,
+            Part2Solver.solve(exampleInput.lines())
         )
     }
 }

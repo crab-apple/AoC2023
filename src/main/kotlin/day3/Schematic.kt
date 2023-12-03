@@ -9,14 +9,15 @@ class Schematic(private val lines: List<String>) {
         }.toSet()
     }
 
-    fun symbols(): Set<Pair<Int, Int>> {
+    fun symbols(): Set<Symbol> {
         return lines.flatMapIndexed { lineNumber, line ->
             "[^\\d.]".toRegex().findAll(line)
-                .map { Pair(lineNumber, it.range.first) }
+                .map { Symbol(it.value.first(), Pair(lineNumber, it.range.first)) }
         }.toSet()
     }
 
     data class Number(val value: Int, val row: Int, val start: Int, val end: Int) {
+
         fun positionIsAdjacent(position: Pair<Int, Int>): Boolean {
             val positionRow = position.first
             val positionColumn = position.second
@@ -35,4 +36,6 @@ class Schematic(private val lines: List<String>) {
             return true
         }
     }
+
+    data class Symbol(val value: Char, val position: Pair<Int, Int>)
 }
