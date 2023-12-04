@@ -14,17 +14,12 @@ object Part1Solver {
     fun solve(input: List<String>) = input.sumOf { lineScore(it) }
 
     private fun lineScore(it: String): Int {
-        val numbers = it.substringAfter(":")
-        val winningNumbers: List<Int> =
-            numbers.split("|").first().split(" ").filter { it.isNotBlank() }.map { it.toInt() }
-        val numbersIHave: Set<Int> =
-            numbers.split("|").last().split(" ").filter { it.isNotBlank() }.map { it.toInt() }.toSet()
+        val scratchCard = ScratchCard.parse(it)
 
-        val numMatches = winningNumbers.count { numbersIHave.contains(it) }
-        if (numMatches == 0) {
+        if (scratchCard.numMatches() == 0) {
             return 0
         }
-        return 2.0.pow(numMatches - 1).toInt()
+        return 2.0.pow(scratchCard.numMatches() - 1).toInt()
     }
 }
 
