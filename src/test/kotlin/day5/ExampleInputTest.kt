@@ -48,5 +48,13 @@ class ExampleInputTest {
             Part1Solver.solve(exampleInput.lines())
         )
     }
+
+    @Test
+    fun testPart2() {
+        assertEquals(
+            46,
+            Part2Solver.solve(exampleInput.lines())
+        )
+    }
 }
 
