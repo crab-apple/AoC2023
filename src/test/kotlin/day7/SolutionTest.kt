@@ -15,7 +15,6 @@ class SolutionTest {
 """.trimIndent()
 
     @Test
-    @Disabled
     fun testPart1() {
         assertEquals(
             6440,
