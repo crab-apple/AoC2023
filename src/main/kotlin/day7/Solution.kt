@@ -14,7 +14,7 @@ fun solvePart1(input: List<String>): Int {
 }
 
 fun solvePart2(input: List<String>): Int {
-    return input.size
+    return solveWith(input, HandRankerWithJokers())
 }
 
 private fun solveWith(input: List<String>, ranker: HandRanker): Int {

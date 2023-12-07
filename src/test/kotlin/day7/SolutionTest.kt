@@ -21,5 +21,13 @@ class SolutionTest {
             solvePart1(exampleInput.lines())
         )
     }
+
+    @Test
+    fun testPart2() {
+        assertEquals(
+            5905,
+            solvePart2(exampleInput.lines())
+        )
+    }
 }
 
