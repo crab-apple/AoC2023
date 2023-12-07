@@ -4,12 +4,14 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import kotlin.test.Test
 
-class HandTest {
+class SimpleHandRankerTest {
+
+    private val ranker = SimpleHandRanker()
 
     @Test
     fun fiveOfAKind() {
         assertThat(
-            Hand("AAAAA").type(),
+            ranker.type(Hand("AAAAA")),
             `is`(Hand.Type.FIVE_OF_A_KIND)
         )
     }
@@ -17,7 +19,7 @@ class HandTest {
     @Test
     fun fourOfAKind() {
         assertThat(
-            Hand("AA8AA").type(),
+            ranker.type(Hand("AA8AA")),
             `is`(Hand.Type.FOUR_OF_A_KIND)
         )
     }
@@ -25,7 +27,7 @@ class HandTest {
     @Test
     fun fullHouse() {
         assertThat(
-            Hand("23332").type(),
+            ranker.type(Hand("23332")),
             `is`(Hand.Type.FULL_HOUSE)
         )
     }
@@ -33,7 +35,7 @@ class HandTest {
     @Test
     fun threeOfAKind() {
         assertThat(
-            Hand("TTT98").type(),
+            ranker.type(Hand("TTT98")),
             `is`(Hand.Type.THREE_OF_A_KIND)
         )
     }
@@ -41,7 +43,7 @@ class HandTest {
     @Test
     fun twoPair() {
         assertThat(
-            Hand("23432").type(),
+            ranker.type(Hand("23432")),
             `is`(Hand.Type.TWO_PAIR)
         )
     }
@@ -49,7 +51,7 @@ class HandTest {
     @Test
     fun onePair() {
         assertThat(
-            Hand("A23A4").type(),
+            ranker.type(Hand("A23A4")),
             `is`(Hand.Type.ONE_PAIR)
         )
     }
@@ -57,7 +59,7 @@ class HandTest {
     @Test
     fun highCard() {
         assertThat(
-            Hand("23456").type(),
+            ranker.type(Hand("23456")),
             `is`(Hand.Type.HIGH_CARD)
         )
     }
@@ -65,7 +67,7 @@ class HandTest {
     @Test
     fun rankDifferentTypes() {
         assertThat(
-            listOf(Hand("KK677"), Hand("32T3K")).sortedWith(Hand.comparator()),
+            listOf(Hand("KK677"), Hand("32T3K")).sortedWith(ranker.comparator()),
             `is`(listOf(Hand("32T3K"), Hand("KK677")))
         )
     }
@@ -73,7 +75,7 @@ class HandTest {
     @Test
     fun rankSameType() {
         assertThat(
-            listOf(Hand("AAKAA"), Hand("AATAA"), Hand("AA3AA")).sortedWith(Hand.comparator()),
+            listOf(Hand("AAKAA"), Hand("AATAA"), Hand("AA3AA")).sortedWith(ranker.comparator()),
             `is`(listOf(Hand("AA3AA"), Hand("AATAA"), Hand("AAKAA")))
         )
     }
