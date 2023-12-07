@@ -61,4 +61,20 @@ class HandTest {
             `is`(Hand.Type.HIGH_CARD)
         )
     }
+
+    @Test
+    fun rankDifferentTypes() {
+        assertThat(
+            listOf(Hand("KK677"), Hand("32T3K")).sortedWith(Hand.comparator()),
+            `is`(listOf(Hand("32T3K"), Hand("KK677")))
+        )
+    }
+
+    @Test
+    fun rankSameType() {
+        assertThat(
+            listOf(Hand("AAKAA"), Hand("AATAA"), Hand("AA3AA")).sortedWith(Hand.comparator()),
+            `is`(listOf(Hand("AA3AA"), Hand("AATAA"), Hand("AAKAA")))
+        )
+    }
 }

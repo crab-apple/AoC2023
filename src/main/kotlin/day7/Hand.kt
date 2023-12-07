@@ -1,9 +1,15 @@
 package day7
 
-class Hand(private val cards: String) {
+data class Hand(private val cards: String) {
 
     enum class Type {
-        FIVE_OF_A_KIND, FOUR_OF_A_KIND, FULL_HOUSE, THREE_OF_A_KIND, TWO_PAIR, ONE_PAIR, HIGH_CARD
+        HIGH_CARD,
+        ONE_PAIR,
+        TWO_PAIR,
+        THREE_OF_A_KIND,
+        FULL_HOUSE,
+        FOUR_OF_A_KIND,
+        FIVE_OF_A_KIND,
     }
 
     fun type(): Type {
@@ -36,5 +42,23 @@ class Hand(private val cards: String) {
         }
 
         return Type.HIGH_CARD
+    }
+
+    companion object {
+
+        fun comparator(): Comparator<Hand> {
+            return compareBy<Hand> { it.type() }
+                .thenComparing({ it.cards }, this::lexicographic)
+        }
+
+        private fun lexicographic(a: String, b: String): Int {
+            val order = "23456789TJQKA"
+            val valA = order.indexOf(a[0])
+            val valB = order.indexOf(b[0])
+            if (valA == valB) {
+                return lexicographic(a.drop(1), b.drop(1))
+            }
+            return valA - valB
+        }
     }
 }
