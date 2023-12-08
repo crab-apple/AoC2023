@@ -25,22 +25,35 @@ fun solvePart1(input: List<String>): Int {
 
 fun solvePart2(input: List<String>): Int {
 
+    // Note that the puzzle description doesn't say so, but it turns out that, starting from any node (not just the
+    // ones that end with 'A') and following directions from the start of the direction list, the number of steps it
+    // takes to reach a node ending with 'Z' is always a multiple of the length of the direction list.
+
     val map = DesertMap.parse(input)
+    val cycleMap = map.nodes.keys.associateWith { map.nextNodeAfterOneCycle(it) }
 
     var currentNodes = map.nodes.keys.filter { it.endsWith('A') }
-    var count = 0
+    var cycleCount = 0
     do {
-        currentNodes = currentNodes.map { map.nextNode(it, count) }
-        count++
+        currentNodes = currentNodes.map { cycleMap[it]!! }
+        cycleCount++
     } while (!currentNodes.all { it.endsWith('Z') })
 
-    return count
+    return cycleCount * map.directions.length
 }
 
 data class DesertMap(val directions: String, val nodes: Map<String, Pair<String, String>>) {
 
     fun nextNode(currentNode: String, step: Int): String {
         val direction = directions[step % directions.length]
+        return navigate(currentNode, direction)
+    }
+
+    fun nextNodeAfterOneCycle(initialNode: String): String {
+        return directions.fold(initialNode) { node, direction -> navigate(node, direction) }
+    }
+
+    private fun navigate(currentNode: String, direction: Char): String {
         return when (direction) {
             'L' -> nodes[currentNode]!!.first
             'R' -> nodes[currentNode]!!.second
