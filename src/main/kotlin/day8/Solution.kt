@@ -23,23 +23,31 @@ fun solvePart1(input: List<String>): Int {
     return count
 }
 
-fun solvePart2(input: List<String>): Int {
+fun solvePart2(input: List<String>): Long {
 
-    // Note that the puzzle description doesn't say so, but it turns out that, starting from any node (not just the
-    // ones that end with 'A') and following directions from the start of the direction list, the number of steps it
-    // takes to reach a node ending with 'Z' is always a multiple of the length of the direction list.
+    /*
+         Note that the puzzle description doesn't say so, but it turns out that:
+
+         - starting from any node (not just the ones that end with 'A') and following directions from the start of the
+           direction list, the number of steps it takes to reach a node ending with 'Z' is always a multiple of the length
+           of the direction list.
+
+         - the paths that are followed starting from the nodes that end with 'A' do not intersect each other. So the map
+           is actually N distinct, non-overlapping maps, where N is the number of starting nodes.
+
+         - within each submap, the number of direction cycles necessary to go from A to Z is the same as the number
+           necessary to go from Z to Z
+    */
 
     val map = DesertMap.parse(input)
     val cycleMap = map.nodes.keys.associateWith { map.nextNodeAfterOneCycle(it) }
+    val startingNodes = map.nodes.keys.filter { it.endsWith('A') }
 
-    var currentNodes = map.nodes.keys.filter { it.endsWith('A') }
-    var cycleCount = 0
-    do {
-        currentNodes = currentNodes.map { cycleMap[it]!! }
-        cycleCount++
-    } while (!currentNodes.all { it.endsWith('Z') })
+    val cycleLengths: List<Long> =
+        startingNodes.map { startingNode -> countUntil(startingNode, { cycleMap[it]!! }, { it.endsWith('Z') }) }
+            .map { it.toLong() }
 
-    return cycleCount * map.directions.length
+    return cycleLengths.reduce { a, b -> a * b } * map.directions.length
 }
 
 data class DesertMap(val directions: String, val nodes: Map<String, Pair<String, String>>) {
@@ -81,4 +89,14 @@ data class DesertMap(val directions: String, val nodes: Map<String, Pair<String,
             return DesertMap(directions, nodes)
         }
     }
+}
+
+fun <T> countUntil(initial: T, transform: (T) -> T, endCondition: (T) -> Boolean): Int {
+    var current = initial;
+    var count = 0
+    do {
+        current = transform(current)
+        count++
+    } while (!endCondition(current))
+    return count;
 }
