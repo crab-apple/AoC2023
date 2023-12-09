@@ -10,13 +10,15 @@ fun main() {
 }
 
 fun solvePart1(input: List<String>): Long {
-
-    val sequences = input.map { it.split(" ").map { it.toLong() }.let { Sequence(it) } }
-
+    val sequences = parseInput(input)
     return sequences.sumOf { it.nextValue() }
 }
 
-fun solvePart2(input: List<String>): Int {
-    return input.size
+fun solvePart2(input: List<String>): Long {
+    val sequences = parseInput(input)
+    return sequences.sumOf { it.previousValue() }
 }
+
+private fun parseInput(input: List<String>) =
+    input.map { it.split(" ").map { it.toLong() }.let { Sequence(it) } }
 
