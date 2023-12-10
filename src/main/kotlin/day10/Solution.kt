@@ -161,7 +161,7 @@ data class PipeSection(val tiles: List<Tile>) {
     fun plus(tile: Tile) = PipeSection(tiles.plus(tile))
 
     fun last() = tiles.last()
-    fun secondToLast() = tiles.dropLast(1).last()
+    fun secondToLast() = tiles[tiles.size - 2]
 
     fun size() = tiles.size
 
