@@ -9,13 +9,13 @@ fun main() {
     solvePart2(input).println()
 }
 
-fun solvePart1(input: List<String>): Int {
+fun solvePart1(input: List<String>): Long {
     val ground = Ground.parse(input)
-    return ground.findFullPipe().size() / 2
+    return ground.findFullPipe().size().toLong() / 2
 }
 
-fun solvePart2(input: List<String>): Int {
-    return input.size
+fun solvePart2(input: List<String>): Long {
+    return input.size.toLong()
 }
 
 class Ground(private val contents: Map<Point, Tile>) {

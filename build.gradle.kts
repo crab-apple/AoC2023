@@ -15,4 +15,5 @@ tasks {
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
 }
