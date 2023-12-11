@@ -7,12 +7,16 @@ import kotlin.math.abs
 fun main() {
     val input = readInput("day11/input")
     solvePart1(input).println()
-    solvePart2(input).println()
+    solvePart2(input, 1_000_000).println()
 }
 
 fun solvePart1(input: List<String>): Long {
-    val space = expandSpace(input)
-    val galaxies: List<Pair<Int, Int>> = space.flatMapIndexed { numRow, row ->
+    return solvePart2(input, 2)
+}
+
+fun solvePart2(input: List<String>, expansionFactor: Int): Long {
+
+    var galaxies: List<Pair<Int, Int>> = input.flatMapIndexed { numRow, row ->
         row.mapIndexedNotNull { numCol, char ->
             if (char == '#') Pair(
                 numCol,
@@ -21,11 +25,21 @@ fun solvePart1(input: List<String>): Long {
         }
     }
 
-    return galaxies.sumOf { a -> galaxies.sumOf { b -> distance(a, b) } } / 2
-}
+    val emptyRows = input.indices.filter { !input[it].contains('#') }
+    val emptyColumns = input[0].indices.filter { col -> input.none { it[col] == '#' } }
 
-fun solvePart2(input: List<String>): Long {
-    return input.size.toLong()
+    emptyRows.sortedDescending().forEach { emptyRowNum ->
+        galaxies = galaxies.map {
+            if (it.second > emptyRowNum) Pair(it.first, it.second + expansionFactor - 1) else it
+        }
+    }
+    emptyColumns.sortedDescending().forEach { emptyColNum ->
+        galaxies = galaxies.map {
+            if (it.first > emptyColNum) Pair(it.first + expansionFactor - 1, it.second) else it
+        }
+    }
+
+    return galaxies.sumOf { a -> galaxies.sumOf { b -> distance(a, b) } } / 2
 }
 
 fun distance(galaxyA: Pair<Int, Int>, galaxyB: Pair<Int, Int>): Long {

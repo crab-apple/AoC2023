@@ -8,11 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 class SolutionTest {
 
-    @Test
-    fun testPart1Example() {
-        assertThat(
-            solvePart1(
-                """
+    val exampleInput = """
         ...#......
         .......#..
         #.........
@@ -24,9 +20,20 @@ class SolutionTest {
         .......#..
         #...#..... 
         """.trimIndent().lines()
-            ),
-            `is`(374)
-        )
+
+    @Test
+    fun testPart1Example() {
+        assertThat(solvePart1(exampleInput), `is`(374))
+    }
+
+    @Test
+    fun testPart2Example1() {
+        assertThat(solvePart2(exampleInput, 10), `is`(1030))
+    }
+
+    @Test
+    fun testPart2Example2() {
+        assertThat(solvePart2(exampleInput, 100), `is`(8410))
     }
 
     @ParameterizedTest
