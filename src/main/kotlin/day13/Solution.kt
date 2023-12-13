@@ -13,23 +13,46 @@ fun main() {
 
 fun solvePart1(input: List<String>): Long {
     val patterns = input.split { it.isEmpty() }
-    return patterns.sumOf { score(it) }.toLong()
+    return patterns.sumOf { score(it)!! }.toLong()
 }
 
 fun solvePart2(input: List<String>): Long {
-    return input.size.toLong()
+    val patterns = input.split { it.isEmpty() }
+    return patterns.sumOf { scoreWithSmudge(it) }.toLong()
 }
 
-fun score(pattern: List<String>): Int {
-    return findVerticalSplit(pattern) ?: ((findHorizontalSplit(pattern)!!) * 100)
+fun scoreWithSmudge(pattern: List<String>): Int {
+    val regularScore = score(pattern)
+    return (0..<pattern.sumOf { it.length }).flatMap { scores(smudge(pattern, it)) }.first { it != regularScore }
 }
 
-fun findVerticalSplit(pattern: List<String>): Int? {
-    return findHorizontalSplit(transpose(pattern))
+fun smudge(pattern: List<String>, index: Int): List<String> {
+    val rowLength = pattern[0].length
+    val rowNumToSmudge = index / rowLength
+    val colNumToSmudge = index % rowLength
+    return pattern.mapIndexed { rowNum, row ->
+        row.mapIndexed { colNum, char ->
+            if (rowNum == rowNumToSmudge && colNum == colNumToSmudge) smudge(char) else char
+        }.joinToString("")
+    }
 }
 
-fun findHorizontalSplit(pattern: List<String>): Int? {
-    return (1..<pattern.size).firstOrNull { mirrorsAt(pattern, it) }
+fun smudge(char: Char) = if (char == '.') '#' else '.'
+
+fun score(pattern: List<String>): Int? {
+    return scores(pattern).firstOrNull()
+}
+
+fun scores(pattern: List<String>): Set<Int> {
+    return findVerticalSplits(pattern).plus(findHorizontalSplits(pattern).map { it * 100 }).toSet()
+}
+
+fun findVerticalSplits(pattern: List<String>): Set<Int> {
+    return findHorizontalSplits(transpose(pattern))
+}
+
+fun findHorizontalSplits(pattern: List<String>): Set<Int> {
+    return (1..<pattern.size).filter { mirrorsAt(pattern, it) }.toSet()
 }
 
 fun mirrorsAt(pattern: List<String>, index: Int): Boolean {
