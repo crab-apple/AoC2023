@@ -2,6 +2,7 @@ package day11
 
 import println
 import readInput
+import transpose
 import kotlin.math.abs
 
 fun main() {
@@ -58,6 +59,3 @@ private fun expandRows(lines: List<String>): List<String> {
     return lines.flatMap { if (!it.contains("#")) listOf(it, it) else listOf(it) }
 }
 
-private fun transpose(lines: List<String>): List<String> {
-    return lines[0].indices.map { index -> lines.map { it[index] } }.map { it.joinToString("") }
-}
