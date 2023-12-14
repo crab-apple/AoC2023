@@ -20,6 +20,16 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  */
 fun Any?.println() = println(this)
 
+fun String.asInput() = trimIndent().lines()
+
 fun transpose(lines: List<String>): List<String> {
     return lines[0].indices.map { index -> lines.map { it[index] } }.map { it.joinToString("") }
+}
+
+fun rotateClockwise(lines: List<String>): List<String> {
+    return transpose(lines).map { it.reversed() }
+}
+
+fun rotateCounterClockwise(lines: List<String>): List<String> {
+    return transpose(lines).reversed()
 }

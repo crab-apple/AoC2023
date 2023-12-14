@@ -1,5 +1,6 @@
 package day14
 
+import asInput
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import kotlin.test.Test
@@ -23,6 +24,11 @@ class SolutionTest {
     @Test
     fun testPart1() {
         assertEquals(136, solvePart1(exampleInput))
+    }
+
+    @Test
+    fun testPart2() {
+        assertEquals(64, solvePart2(exampleInput))
     }
 
     @Test
@@ -78,6 +84,65 @@ class SolutionTest {
         assertThat(
             bringRocksToStart("..#.....##"),
             `is`("..#.....##")
+        )
+    }
+
+    @Test
+    fun testCycle() {
+
+        assertThat(
+            cycle(exampleInput),
+            `is`(
+                """
+        .....#....
+        ....#...O#
+        ...OO##...
+        .OO#......
+        .....OOO#.
+        .O#...O#.#
+        ....O#....
+        ......OOOO
+        #...O###..
+        #..OO#....
+        """.asInput()
+            )
+        )
+
+        assertThat(
+            cycle(cycle(exampleInput)),
+            `is`(
+                """
+        .....#....
+        ....#...O#
+        .....##...
+        ..O#......
+        .....OOO#.
+        .O#...O#.#
+        ....O#...O
+        .......OOO
+        #..OO###..
+        #.OOO#...O
+        """.asInput()
+            )
+        )
+
+
+        assertThat(
+            cycle(cycle(cycle(exampleInput))),
+            `is`(
+                """
+        .....#....
+        ....#...O#
+        .....##...
+        ..O#......
+        .....OOO#.
+        .O#...O#.#
+        ....O#...O
+        .......OOO
+        #...O###.O
+        #.OOO#...O
+        """.asInput()
+            )
         )
     }
 }
