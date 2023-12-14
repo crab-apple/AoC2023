@@ -29,7 +29,7 @@ class SolutionTest {
     fun testMoveOneRockWithoutStops() {
         assertThat(
             bringRocksToStart(".....O..##"),
-            `is`(10)
+            `is`("O.......##")
         )
     }
 
@@ -37,7 +37,7 @@ class SolutionTest {
     fun testMoveFourRocksWithoutStops() {
         assertThat(
             bringRocksToStart("OO.O.O..##"),
-            `is`(34)
+            `is`("OOOO....##")
         )
     }
 
@@ -45,7 +45,7 @@ class SolutionTest {
     fun testMoveSixRocksWithoutStops() {
         assertThat(
             bringRocksToStart("OO.O.O..OO"),
-            `is`(45)
+            `is`("OOOOOO....")
         )
     }
 
@@ -53,7 +53,7 @@ class SolutionTest {
     fun testMoveOneRockWithStop() {
         assertThat(
             bringRocksToStart("..#..O..##"),
-            `is`(7)
+            `is`("..#O....##")
         )
     }
 
@@ -61,7 +61,7 @@ class SolutionTest {
     fun testMoveTwoRocksWithStop() {
         assertThat(
             bringRocksToStart("..#..O.O##"),
-            `is`(13)
+            `is`("..#OO...##")
         )
     }
 
@@ -69,15 +69,15 @@ class SolutionTest {
     fun testMoveRocksWithMultipleStops() {
         assertThat(
             bringRocksToStart(".O#..O.O##"),
-            `is`(23)
+            `is`("O.#OO...##")
         )
     }
 
     @Test
-    fun testNoRocks() {
+    fun testMoveRocksNoRocks() {
         assertThat(
             bringRocksToStart("..#.....##"),
-            `is`(0)
+            `is`("..#.....##")
         )
     }
 }
