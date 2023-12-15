@@ -1,5 +1,11 @@
+package utils
+
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import utils.asInput
+import utils.rotateClockwise
+import utils.rotateCounterClockwise
+import utils.transpose
 import kotlin.test.Test
 
 class UtilsTest {

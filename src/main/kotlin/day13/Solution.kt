@@ -1,9 +1,9 @@
 package day13
 
-import println
-import readInput
-import split
-import transpose
+import utils.println
+import utils.readInput
+import utils.split
+import utils.transpose
 
 fun main() {
     val input = readInput("day13/input")

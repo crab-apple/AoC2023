@@ -1,10 +1,11 @@
 package day14
 
-import println
-import readInput
-import rotateClockwise
-import rotateCounterClockwise
-import transpose
+import utils.Indexable
+import utils.MutableGrid
+import utils.println
+import utils.readInput
+import utils.rotateCounterClockwise
+import utils.transpose
 
 fun main() {
     val input = readInput("day14/input")
@@ -22,6 +23,7 @@ fun solvePart2(input: List<String>): Long {
     val cycleLength: Int
     var cycleLengthCandidate = 1
     while (true) {
+        println("Testing candidate $cycleLengthCandidate")
         var workingGrid = input
         val results = mutableListOf<Int>()
         for (i in 0..10) {
@@ -42,26 +44,43 @@ fun solvePart2(input: List<String>): Long {
 }
 
 fun cycle(grid: List<String>, times: Int): List<String> {
-    var workingGrid = grid
+
+    val mutableGrid = MutableGrid.of(grid.joinToString("\n"))
+
     for (i in 1..times) {
-        workingGrid = cycle(workingGrid)
+        cycle(mutableGrid)
     }
-    return workingGrid
+
+    return mutableGrid.toString().split("\n")
 }
 
 fun cycle(grid: List<String>): List<String> {
-    var workingGrid = grid
-    workingGrid = rotateCounterClockwise(workingGrid)
-    workingGrid = bringRocksToStart(workingGrid)
-    workingGrid = rotateClockwise(workingGrid)
-    workingGrid = bringRocksToStart(workingGrid)
-    workingGrid = rotateClockwise(workingGrid)
-    workingGrid = bringRocksToStart(workingGrid)
-    workingGrid = rotateClockwise(workingGrid)
-    workingGrid = bringRocksToStart(workingGrid)
-    workingGrid = rotateClockwise(workingGrid)
-    workingGrid = rotateClockwise(workingGrid)
-    return workingGrid
+    val mutableGrid = MutableGrid.of(grid.joinToString("\n"))
+
+    cycle(mutableGrid)
+
+    return mutableGrid.toString().split("\n")
+}
+
+private fun cycle(mutableGrid: MutableGrid<Char>) {
+    mutableGrid.rotateCounterClockwise()
+
+    bringRocksToStart(mutableGrid)
+
+    mutableGrid.rotateClockwise()
+
+    bringRocksToStart(mutableGrid)
+
+    mutableGrid.rotateClockwise()
+
+    bringRocksToStart(mutableGrid)
+
+    mutableGrid.rotateClockwise()
+
+    bringRocksToStart(mutableGrid)
+
+    mutableGrid.rotateClockwise()
+    mutableGrid.rotateClockwise()
 }
 
 fun bringRocksToStartAndScore(s: String): Int {
@@ -75,17 +94,42 @@ private fun score(s: String): Int {
 }
 
 fun bringRocksToStart(s: String): String {
-    return s.mapIndexedNotNull { index, c -> if (c == '#') index else null }
-        .plus(-1)
-        .sorted().joinToString("") { stop ->
-            val sectionUntilNextStop = s.substring(stop + 1).substringBefore('#')
-            "#" + sectionUntilNextStop.toList().sortedDescending().joinToString("")
-        }
-        .drop(1)
+
+    val arr = Indexable.of(s.toCharArray().toTypedArray())
+
+    bringRocksToStart(arr)
+
+    return arr.joinToString("")
 }
 
-fun bringRocksToStart(grid: List<String>): List<String> {
-    return grid.map { bringRocksToStart(it) }
+private fun bringRocksToStart(arr: Indexable<Char>) {
+    while (true) {
+        var movedSomething = false
+        for (i in 0..<arr.size() - 1)
+            if (arr[i] == '.' && arr[i + 1] == 'O') {
+                swap(arr, i, i + 1)
+                movedSomething = true
+            }
+        if (!movedSomething) break
+    }
 }
+
+private fun <T> swap(arr: Indexable<T>, indexA: Int, indexB: Int) {
+    val temp = arr[indexA]
+    arr[indexA] = arr[indexB]
+    arr[indexB] = temp
+}
+
+fun bringRocksToStart(grid: MutableGrid<Char>) {
+    grid.rows().forEach {
+        val copy = Indexable.of(it.toMutableList().toTypedArray())
+        bringRocksToStart(copy)
+        for (i in 0..<copy.size()) {
+            it[i] = copy[i]
+        }
+    }
+}
+
+
 
 

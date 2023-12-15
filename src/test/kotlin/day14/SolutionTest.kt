@@ -1,6 +1,6 @@
 package day14
 
-import asInput
+import utils.asInput
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import kotlin.test.Test

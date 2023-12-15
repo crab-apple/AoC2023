@@ -1,7 +1,7 @@
 package day4
 
-import println
-import readInput
+import utils.println
+import utils.readInput
 import kotlin.math.pow
 
 fun main() {

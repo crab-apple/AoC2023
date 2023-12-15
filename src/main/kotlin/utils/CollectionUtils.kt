@@ -1,3 +1,5 @@
+package utils
+
 fun <E> List<E>.split(predicate: (E) -> Boolean): List<List<E>> {
 
     val result = mutableListOf<List<E>>()

@@ -6,8 +6,8 @@ import day10.Direction.SOUTH
 import day10.Direction.WEST
 import day10.Laterality.LEFT
 import day10.Laterality.RIGHT
-import println
-import readInput
+import utils.println
+import utils.readInput
 
 fun main() {
     val input = readInput("day10/input")

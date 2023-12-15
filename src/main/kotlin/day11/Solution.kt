@@ -1,8 +1,8 @@
 package day11
 
-import println
-import readInput
-import transpose
+import utils.println
+import utils.readInput
+import utils.transpose
 import kotlin.math.abs
 
 fun main() {

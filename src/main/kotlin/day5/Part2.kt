@@ -1,8 +1,8 @@
 package day5
 
-import println
-import readInput
-import split
+import utils.println
+import utils.readInput
+import utils.split
 
 fun main() {
     val input = readInput("day5/input")

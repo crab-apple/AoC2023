@@ -1,7 +1,7 @@
 package day9
 
-import println
-import readInput
+import utils.println
+import utils.readInput
 
 fun main() {
     val input = readInput("day9/input")

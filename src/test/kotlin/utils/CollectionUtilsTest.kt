@@ -1,5 +1,6 @@
+package utils
+
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import kotlin.test.Test
 
