@@ -15,6 +15,11 @@ class SolutionTest {
     }
 
     @Test
+    fun testPart2() {
+        assertEquals(145, solvePart2(exampleInput))
+    }
+
+    @Test
     fun testHash() {
         assertThat(hash("HASH"), `is`(52))
     }
