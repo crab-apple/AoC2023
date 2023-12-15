@@ -23,9 +23,21 @@ interface Indexable<T> : Iterable<T> {
     companion object {
 
         fun <T> of(arr: Array<T>): Indexable<T> = ArrayIndexable(arr)
+        fun <T> of(arr: MutableList<T>): Indexable<T> = ListIndexable(arr)
     }
 
     private class ArrayIndexable<T>(private val arr: Array<T>) : Indexable<T> {
+
+        override fun get(index: Int) = arr[index]
+
+        override fun set(index: Int, value: T) {
+            arr[index] = value
+        }
+
+        override fun size() = arr.size
+    }
+
+    private class ListIndexable<T>(private val arr: MutableList<T>) : Indexable<T> {
 
         override fun get(index: Int) = arr[index]
 

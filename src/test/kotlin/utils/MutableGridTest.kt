@@ -3,9 +3,10 @@ package utils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
-import utils.MutableGrid.Position
 
-class MutableGridTest {
+abstract class MutableGridTest {
+
+    abstract fun mutableGrid(string: String): MutableGrid<Char>
 
     @Test
     fun testToString() {
@@ -13,7 +14,7 @@ class MutableGridTest {
             ABC
             DEF
         """.trimIndent()
-        val grid = MutableGrid.of(string)
+        val grid = mutableGrid(string)
         assertThat(grid.toString(), `is`(string))
     }
 
@@ -23,30 +24,30 @@ class MutableGridTest {
             ABC
             DEF
         """.trimIndent()
-        val grid = MutableGrid.of(string)
+        val grid = mutableGrid(string)
         assertThat(grid.numCols(), `is`(3))
         assertThat(grid.numRows(), `is`(2))
     }
 
     @Test
     fun testGetValues() {
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
                 ABC
                 DEF
             """.trimIndent()
         )
-        assertThat(grid.get(Position(0, 0)), `is`('D'))
-        assertThat(grid.get(Position(1, 0)), `is`('E'))
-        assertThat(grid.get(Position(2, 0)), `is`('F'))
-        assertThat(grid.get(Position(0, 1)), `is`('A'))
-        assertThat(grid.get(Position(1, 1)), `is`('B'))
-        assertThat(grid.get(Position(2, 1)), `is`('C'))
+        assertThat(grid.get(0, 0), `is`('D'))
+        assertThat(grid.get(1, 0), `is`('E'))
+        assertThat(grid.get(2, 0), `is`('F'))
+        assertThat(grid.get(0, 1), `is`('A'))
+        assertThat(grid.get(1, 1), `is`('B'))
+        assertThat(grid.get(2, 1), `is`('C'))
     }
 
     @Test
     fun testTranspose() {
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -57,12 +58,12 @@ class MutableGridTest {
         grid.transpose()
 
 
-        assertThat(grid.get(Position(0, 0)), `is`('E'))
-        assertThat(grid.get(Position(1, 0)), `is`('C'))
-        assertThat(grid.get(Position(2, 0)), `is`('A'))
-        assertThat(grid.get(Position(0, 1)), `is`('F'))
-        assertThat(grid.get(Position(1, 1)), `is`('D'))
-        assertThat(grid.get(Position(2, 1)), `is`('B'))
+        assertThat(grid.get(0, 0), `is`('E'))
+        assertThat(grid.get(1, 0), `is`('C'))
+        assertThat(grid.get(2, 0), `is`('A'))
+        assertThat(grid.get(0, 1), `is`('F'))
+        assertThat(grid.get(1, 1), `is`('D'))
+        assertThat(grid.get(2, 1), `is`('B'))
 
         assertThat(
             grid.toString(),
@@ -78,7 +79,7 @@ class MutableGridTest {
     @Test
     fun testRotateClockwise() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -90,9 +91,9 @@ class MutableGridTest {
         grid.rotateClockwise()
 
 
-        assertThat(grid.get(Position(0, 0)), `is`('F'))
-        assertThat(grid.get(Position(1, 0)), `is`('D'))
-        assertThat(grid.get(Position(0, 1)), `is`('E'))
+        assertThat(grid.get(0, 0), `is`('F'))
+        assertThat(grid.get(1, 0), `is`('D'))
+        assertThat(grid.get(0, 1), `is`('E'))
         assertThat(
             grid.toString(),
             `is`(
@@ -105,9 +106,9 @@ class MutableGridTest {
 
         grid.rotateClockwise()
 
-        assertThat(grid.get(Position(0, 0)), `is`('B'))
-        assertThat(grid.get(Position(1, 0)), `is`('A'))
-        assertThat(grid.get(Position(0, 1)), `is`('D'))
+        assertThat(grid.get(0, 0), `is`('B'))
+        assertThat(grid.get(1, 0), `is`('A'))
+        assertThat(grid.get(0, 1), `is`('D'))
         assertThat(
             grid.toString(),
             `is`(
@@ -144,7 +145,7 @@ class MutableGridTest {
     @Test
     fun testRotateCounterclockwise() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -165,7 +166,7 @@ class MutableGridTest {
 
     @Test
     fun testTransposeThenRotate() {
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -190,7 +191,7 @@ class MutableGridTest {
 
     @Test
     fun testRotateThenTranspose() {
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -215,7 +216,7 @@ class MutableGridTest {
 
     @Test
     fun testTransformAndSet() {
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             AB
             CD
@@ -223,7 +224,7 @@ class MutableGridTest {
         )
 
         grid.rotateClockwise()
-        grid.set(Position(1, 0), '#')
+        grid.set(1, 0, '#')
 
         assertThat(
             grid.toString(),
@@ -239,7 +240,7 @@ class MutableGridTest {
     @Test
     fun `test access and iterate columns`() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             ABC
             DEF
@@ -277,7 +278,7 @@ class MutableGridTest {
     @Test
     fun `test set values through columns`() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             ...
             ...
@@ -320,7 +321,7 @@ class MutableGridTest {
     @Test
     fun `test access and iterate rows`() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             ABC
             DEF
@@ -353,7 +354,7 @@ class MutableGridTest {
     @Test
     fun `test set values through rows`() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             ...
             ...
@@ -396,7 +397,7 @@ class MutableGridTest {
     @Test
     fun handlesManyRotations() {
 
-        val grid = MutableGrid.of(
+        val grid = mutableGrid(
             """
             ABC
             DEF

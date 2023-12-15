@@ -1,6 +1,7 @@
 package day14
 
 import utils.Indexable
+import utils.LayeredMutableGrid
 import utils.MutableGrid
 import utils.println
 import utils.readInput
@@ -45,7 +46,7 @@ fun solvePart2(input: List<String>): Long {
 
 fun cycle(grid: List<String>, times: Int): List<String> {
 
-    val mutableGrid = MutableGrid.of(grid.joinToString("\n"))
+    val mutableGrid = LayeredMutableGrid.of(grid.joinToString("\n"))
 
     for (i in 1..times) {
         cycle(mutableGrid)
@@ -55,7 +56,7 @@ fun cycle(grid: List<String>, times: Int): List<String> {
 }
 
 fun cycle(grid: List<String>): List<String> {
-    val mutableGrid = MutableGrid.of(grid.joinToString("\n"))
+    val mutableGrid = LayeredMutableGrid.of(grid.joinToString("\n"))
 
     cycle(mutableGrid)
 
