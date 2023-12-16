@@ -1,14 +1,17 @@
 package utils
 
 import java.math.BigInteger
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import kotlin.io.path.Path
-import kotlin.io.path.readLines
+import kotlin.io.path.readText
 
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(name: String) = Path("src/main/kotlin/$name.txt").readLines()
+fun readInput(name: String) = readInputOneString(name).lines()
+
+fun readInputOneString(name: String) = Path("src/main/kotlin/$name.txt").readText(StandardCharsets.UTF_8)
 
 /**
  * Converts string to md5 hash.
