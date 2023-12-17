@@ -41,8 +41,7 @@ private fun solve(input: String, crucibleParams: CrucibleParams): Int {
 
     val costs = mutableMapOf<State, Int>()
 
-    val pendingToEvaluate = PriorityQueue(compareBy<State> { it.position.row }
-        .thenBy { it.position.col })
+    val pendingToEvaluate = PriorityQueue(compareBy<State> { it.position.row + it.position.col })
 
     val initialStates = listOf(
         State(Position(0, 0), EAST, 0),
