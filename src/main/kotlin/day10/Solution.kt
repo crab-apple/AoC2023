@@ -1,11 +1,13 @@
 package day10
 
-import day10.Direction.EAST
-import day10.Direction.NORTH
-import day10.Direction.SOUTH
-import day10.Direction.WEST
-import day10.Laterality.LEFT
-import day10.Laterality.RIGHT
+import utils.Direction
+import utils.Direction.EAST
+import utils.Direction.NORTH
+import utils.Direction.SOUTH
+import utils.Direction.WEST
+import utils.Laterality
+import utils.Laterality.LEFT
+import utils.Laterality.RIGHT
 import utils.println
 import utils.readInput
 
@@ -233,17 +235,3 @@ data class Point(val x: Int, val y: Int) {
     }
 }
 
-enum class Laterality { LEFT, RIGHT }
-
-enum class Direction() {
-
-    NORTH, EAST, SOUTH, WEST;
-
-    fun turn(laterality: Laterality): Direction {
-        val delta = when (laterality) {
-            RIGHT -> 1
-            LEFT -> -1
-        }
-        return Direction.entries[(this.ordinal + delta + Direction.entries.size) % Direction.entries.size]
-    }
-}
