@@ -31,6 +31,14 @@ class SolutionTest {
     }
 
     @Test
+    fun testPart2() {
+        assertThat(
+            solvePart2(exampleInput),
+            `is`(94)
+        )
+    }
+
+    @Test
     fun testStraightRight() {
         assertThat(
             solvePart1("""123"""),
@@ -63,6 +71,22 @@ class SolutionTest {
                 """.trimIndent()
             ),
             `is`(4)
+        )
+    }
+
+    @Test
+    fun ultraCrucibleExample2(){
+        assertThat(
+            solvePart2(
+                """
+                111111111111
+                999999999991
+                999999999991
+                999999999991
+                999999999991
+                """.trimIndent()
+            ),
+            `is`(71)
         )
     }
 }

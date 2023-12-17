@@ -8,8 +8,10 @@ import utils.Laterality.RIGHT
 import utils.Position
 import utils.println
 import utils.readInputOneString
+import utils.Direction.SOUTH as SOUTH1
 
-private const val MAX_MOVES_SAME_DIRECTION = 3
+private val REGULAR_CRUCIBLE = CrucibleParams(0, 3)
+private val ULTRA_CRUCIBLE = CrucibleParams(4, 10)
 
 fun main() {
     val input = readInputOneString("day17/input")
@@ -18,7 +20,14 @@ fun main() {
 }
 
 fun solvePart1(input: String): Int {
+    return solve(input, REGULAR_CRUCIBLE)
+}
 
+fun solvePart2(input: String): Int {
+    return solve(input, ULTRA_CRUCIBLE)
+}
+
+private fun solve(input: String, crucibleParams: CrucibleParams): Int {
     val grid = input.split("\n").map { it.map { it.digitToInt() } }
     val numRows = grid.size
     val numCols = grid[0].size
@@ -32,13 +41,18 @@ fun solvePart1(input: String): Int {
     val costs = mutableMapOf<State, Int>()
     val pendingToEvaluate = mutableListOf<State>()
 
-    val initialState = State(Position(0, 0), EAST, MAX_MOVES_SAME_DIRECTION)
-    costs[initialState] = 0
-    pendingToEvaluate.add(initialState)
+    val initialStates = listOf(
+        State(Position(0, 0), EAST, 0),
+        State(Position(0, 0), SOUTH1, 0)
+    )
+    for (initialState in initialStates) {
+        costs[initialState] = 0
+        pendingToEvaluate.add(initialState)
+    }
 
     while (pendingToEvaluate.isNotEmpty()) {
         val currentlyEvaluating = pendingToEvaluate.removeFirst()
-        var nextStates = currentlyEvaluating.nextStates()
+        var nextStates = currentlyEvaluating.nextStates(crucibleParams)
             .filter { inBounds(it.position) }
 
         nextStates.forEach { nextState ->
@@ -53,21 +67,24 @@ fun solvePart1(input: String): Int {
     }
 
     return costs.entries
-        .filter { it.key.position==Position(numRows-1,numCols-1) }
+        .filter { it.key.position == Position(numRows - 1, numCols - 1) }
+        .filter { it.key.straightMovesSoFar >= crucibleParams.minMovesSameDirection }
         .minOf { it.value }
 }
 
-fun solvePart2(input: String): Int {
-    return input.length
-}
+private data class State(
+    val position: Position,
+    val direction: Direction,
+    val straightMovesSoFar: Int
+) {
 
-private data class State(val position: Position, val direction: Direction, val straightMovesLeft: Int) {
-
-    fun nextStates(): List<State> {
+    fun nextStates(crucibleParams: CrucibleParams): List<State> {
         val result = mutableListOf<State>()
-        result.add(turning(LEFT))
-        result.add(turning(RIGHT))
-        if (straightMovesLeft > 0) {
+        if (straightMovesSoFar >= crucibleParams.minMovesSameDirection) {
+            result.add(turning(LEFT))
+            result.add(turning(RIGHT))
+        }
+        if (straightMovesSoFar < crucibleParams.maxMovesSameDirection) {
             result.add(goingStraight())
         }
         return result
@@ -77,7 +94,7 @@ private data class State(val position: Position, val direction: Direction, val s
         return State(
             position.neighbour(direction.turn(laterality)),
             direction.turn(laterality),
-            MAX_MOVES_SAME_DIRECTION - 1
+            1
         )
     }
 
@@ -85,10 +102,12 @@ private data class State(val position: Position, val direction: Direction, val s
         return State(
             position.neighbour(direction),
             direction,
-            straightMovesLeft - 1
+            straightMovesSoFar + 1
         )
     }
 }
+
+data class CrucibleParams(val minMovesSameDirection: Int, val maxMovesSameDirection: Int)
 
 
 
