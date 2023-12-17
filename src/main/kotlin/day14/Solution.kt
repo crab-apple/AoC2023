@@ -1,35 +1,53 @@
 package day14
 
+import utils.Direction
+import utils.Direction.EAST
+import utils.Direction.NORTH
+import utils.Direction.SOUTH
+import utils.Direction.WEST
 import utils.Indexable
-import utils.LayeredMutableGrid
-import utils.MutableGrid
+import utils.Position
 import utils.println
 import utils.readInput
-import utils.rotateCounterClockwise
-import utils.transpose
 
 fun main() {
     val input = readInput("day14/input")
-    solvePart1(input).println()
+//    solvePart1(input).println()
     solvePart2(input).println()
 }
 
 fun solvePart1(input: List<String>): Long {
-    return transpose(input).sumOf { bringRocksToStartAndScore(it) }.toLong()
+    val grid = Grid(input.joinToString("\n"))
+    grid.bringRocksToStart(NORTH)
+    return grid.northLoad().toLong()
 }
 
 fun solvePart2(input: List<String>): Long {
+
+    // Cycle until we find the same position twice
+    val seen = mutableSetOf<String>()
+    val grid_ = Grid(input.joinToString("\n"))
+    while (true) {
+        if (!seen.add(grid_.toString())) {
+            break;
+        }
+        cycle(grid_)
+    }
+    println("Found repetition after seeing ${seen.size} positions")
+    return 0
 
     // Find the cycle length
     val cycleLength: Int
     var cycleLengthCandidate = 1
     while (true) {
         println("Testing candidate $cycleLengthCandidate")
-        var workingGrid = input
+        val grid = Grid(input.joinToString("\n"))
         val results = mutableListOf<Int>()
         for (i in 0..10) {
-            workingGrid = cycle(workingGrid, cycleLengthCandidate)
-            results.add(score(rotateCounterClockwise(workingGrid)))
+            for (i in 1..cycleLengthCandidate) {
+                cycle(grid)
+            }
+            results.add(grid.northLoad())
         }
         if (results.takeLast(5).distinct().size == 1) {
             cycleLength = cycleLengthCandidate
@@ -38,98 +56,112 @@ fun solvePart2(input: List<String>): Long {
         cycleLengthCandidate++
     }
 
-    var workingGrid = input
-    workingGrid = cycle(workingGrid, 1_000_000_000 % cycleLength)
-    workingGrid = cycle(workingGrid, cycleLength * 10)
-    return score(rotateCounterClockwise(workingGrid)).toLong()
-}
-
-fun cycle(grid: List<String>, times: Int): List<String> {
-
-    val mutableGrid = LayeredMutableGrid.of(grid.joinToString("\n"))
-
-    for (i in 1..times) {
-        cycle(mutableGrid)
+    val grid = Grid(input.joinToString("\n"))
+    for (i in 1..1_000_000_000 % cycleLength) {
+        cycle(grid)
     }
-
-    return mutableGrid.toString().split("\n")
+    for (i in 1..cycleLength * 10) {
+        cycle(grid)
+    }
+    return grid.northLoad().toLong()
 }
 
-fun cycle(grid: List<String>): List<String> {
-    val mutableGrid = LayeredMutableGrid.of(grid.joinToString("\n"))
-
-    cycle(mutableGrid)
-
-    return mutableGrid.toString().split("\n")
+fun cycle(gridStr: List<String>): List<String> {
+    val grid = Grid(gridStr.joinToString("\n"))
+    cycle(grid)
+    return grid.toString().split("\n")
 }
 
-private fun cycle(mutableGrid: MutableGrid<Char>) {
-    mutableGrid.rotateCounterClockwise()
-
-    bringRocksToStart(mutableGrid)
-
-    mutableGrid.rotateClockwise()
-
-    bringRocksToStart(mutableGrid)
-
-    mutableGrid.rotateClockwise()
-
-    bringRocksToStart(mutableGrid)
-
-    mutableGrid.rotateClockwise()
-
-    bringRocksToStart(mutableGrid)
-
-    mutableGrid.rotateClockwise()
-    mutableGrid.rotateClockwise()
-}
-
-fun bringRocksToStartAndScore(s: String): Int {
-    return score(bringRocksToStart(s))
-}
-
-private fun score(grid: List<String>): Int = grid.sumOf { score(it) }
-
-private fun score(s: String): Int {
-    return s.mapIndexed { index, ch -> if (ch == 'O') s.length - index else 0 }.sum()
+private fun cycle(grid: Grid) {
+    grid.bringRocksToStart(NORTH)
+    grid.bringRocksToStart(WEST)
+    grid.bringRocksToStart(SOUTH)
+    grid.bringRocksToStart(EAST)
 }
 
 fun bringRocksToStart(s: String): String {
 
     val arr = Indexable.of(s.toCharArray().toTypedArray())
 
-    bringRocksToStart(arr)
+    val grid = Grid(arr)
+    grid.bringRocksToStart(WEST)
 
-    return arr.joinToString("")
+    return grid.toString()
 }
 
-private fun bringRocksToStart(arr: Indexable<Char>) {
-    while (true) {
-        var movedSomething = false
-        for (i in 0..<arr.size() - 1)
-            if (arr[i] == '.' && arr[i + 1] == 'O') {
-                swap(arr, i, i + 1)
-                movedSomething = true
-            }
-        if (!movedSomething) break
+class Grid(str: String) {
+
+    constructor(arr: Indexable<Char>) : this(arr.joinToString(""))
+
+    private val numRows: Int
+    private val numCols: Int
+    private val stopPoints: Set<Position>
+    private var currentRockPositions: Set<Position>
+
+    init {
+        val lines = str.lines()
+        numRows = lines.size
+        numCols = lines[0].length
+        stopPoints =
+            lines.flatMapIndexed { rowNum, line -> line.toList().indexesOf('#').map { Position(rowNum, it) } }
+                .toSet()
+        currentRockPositions =
+            lines.flatMapIndexed { rowNum, line -> line.toList().indexesOf('O').map { Position(rowNum, it) } }
+                .toSet()
     }
-}
 
-private fun <T> swap(arr: Indexable<T>, indexA: Int, indexB: Int) {
-    val temp = arr[indexA]
-    arr[indexA] = arr[indexB]
-    arr[indexB] = temp
-}
+    fun bringRocksToStart(direction: Direction) {
 
-fun bringRocksToStart(grid: MutableGrid<Char>) {
-    grid.rows().forEach {
-        val copy = Indexable.of(it.toMutableList().toTypedArray())
-        bringRocksToStart(copy)
-        for (i in 0..<copy.size()) {
-            it[i] = copy[i]
+        fun withinBounds(pos: Position): Boolean {
+            return pos.col in 0..<numCols && pos.row in 0..<numRows
+        }
+
+        val newRockPositions = mutableSetOf<Position>()
+
+        val sorting: (Position) -> Int = {
+            when (direction) {
+                WEST -> it.col
+                EAST -> -it.col
+                NORTH -> it.row
+                SOUTH -> -it.row
+            }
+        }
+
+        currentRockPositions.sortedBy(sorting).forEach { rock ->
+            var current = rock
+            var candidate = current.neighbour(direction)
+            while (withinBounds(candidate) && !stopPoints.contains(candidate) && !newRockPositions.contains(candidate)) {
+                current = candidate
+                candidate = current.neighbour(direction)
+            }
+            newRockPositions.add(current)
+        }
+
+        currentRockPositions = newRockPositions.map { it }.toSet()
+    }
+
+    override fun toString(): String {
+        val allPositions = (0..<numRows).map { numRow -> (0..<numCols).map { numCol -> Position(numRow, numCol) } }
+
+        return allPositions.map { rowPositions ->
+            rowPositions.map { elementAt(it) }.joinToString("")
+        }.joinToString("\n")
+    }
+
+    private fun elementAt(position: Position): Char {
+        return if (stopPoints.contains(position)) {
+            '#'
+        } else if (currentRockPositions.contains(position)) {
+            'O'
+        } else {
+            '.'
         }
     }
+
+    fun northLoad(): Int = currentRockPositions.sumOf { numRows - it.row }
 }
+
+private fun <T> Iterable<T>.indexesOf(c: T) = withIndex().filter { it.value == c }.map { it.index }
 
 
 

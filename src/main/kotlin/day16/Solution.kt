@@ -1,9 +1,11 @@
 package day16
 
-import day16.Direction.EAST
-import day16.Direction.NORTH
-import day16.Direction.SOUTH
-import day16.Direction.WEST
+import utils.Direction
+import utils.Direction.EAST
+import utils.Direction.NORTH
+import utils.Direction.SOUTH
+import utils.Direction.WEST
+import utils.Position
 import utils.println
 import utils.readInputOneString
 
@@ -99,7 +101,7 @@ private fun makeEnergyMap(input: String, startingDirection: Pair<Position, Direc
         }
 
         for (nextDirection in nextDirections) {
-            val next = Pair(position.move(nextDirection), nextDirection)
+            val next = Pair(position.neighbour(nextDirection), nextDirection)
             if (withinBounds(next.first)) {
                 if (evaluated.add(next)) {
                     pendingToEvaluate.add(next)
@@ -116,17 +118,3 @@ private fun makeEnergyMap(input: String, startingDirection: Pair<Position, Direc
     return result
 }
 
-private enum class Direction { NORTH, EAST, SOUTH, WEST
-}
-
-private data class Position(val row: Int, val col: Int) {
-
-    fun move(direction: Direction): Position {
-        return when (direction) {
-            NORTH -> Position(row - 1, col)
-            SOUTH -> Position(row + 1, col)
-            EAST -> Position(row, col + 1)
-            WEST -> Position(row, col - 1)
-        }
-    }
-}
