@@ -8,6 +8,7 @@ import utils.Laterality.RIGHT
 import utils.Position
 import utils.println
 import utils.readInputOneString
+import java.util.*
 import utils.Direction.SOUTH as SOUTH1
 
 private val REGULAR_CRUCIBLE = CrucibleParams(0, 3)
@@ -39,7 +40,9 @@ private fun solve(input: String, crucibleParams: CrucibleParams): Int {
     fun heatLossAtPosition(position: Position) = grid[position.row][position.col]
 
     val costs = mutableMapOf<State, Int>()
-    val pendingToEvaluate = mutableListOf<State>()
+
+    val pendingToEvaluate = PriorityQueue(compareBy<State> { it.position.row }
+        .thenBy { it.position.col })
 
     val initialStates = listOf(
         State(Position(0, 0), EAST, 0),
@@ -51,12 +54,11 @@ private fun solve(input: String, crucibleParams: CrucibleParams): Int {
     }
 
     while (pendingToEvaluate.isNotEmpty()) {
-        val currentlyEvaluating = pendingToEvaluate.removeFirst()
-        var nextStates = currentlyEvaluating.nextStates(crucibleParams)
+        val currentlyEvaluating = pendingToEvaluate.remove()
+        val nextStates = currentlyEvaluating.nextStates(crucibleParams)
             .filter { inBounds(it.position) }
 
         nextStates.forEach { nextState ->
-
             val newCost = costs[currentlyEvaluating]!! + heatLossAtPosition(nextState.position)
             val oldCost = costs[nextState]
             if (oldCost == null || oldCost > newCost) {
@@ -66,9 +68,8 @@ private fun solve(input: String, crucibleParams: CrucibleParams): Int {
         }
     }
 
-    return costs.entries
-        .filter { it.key.position == Position(numRows - 1, numCols - 1) }
-        .filter { it.key.straightMovesSoFar >= crucibleParams.minMovesSameDirection }
+    return costs.filterKeys { it.position == Position(numRows - 1, numCols - 1) }
+        .filterKeys { it.straightMovesSoFar >= crucibleParams.minMovesSameDirection }
         .minOf { it.value }
 }
 

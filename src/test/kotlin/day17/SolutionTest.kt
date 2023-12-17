@@ -2,6 +2,7 @@ package day17
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import kotlin.random.Random
 import kotlin.test.Test
 
 class SolutionTest {
@@ -75,7 +76,7 @@ class SolutionTest {
     }
 
     @Test
-    fun ultraCrucibleExample2(){
+    fun ultraCrucibleExample2() {
         assertThat(
             solvePart2(
                 """
@@ -88,5 +89,25 @@ class SolutionTest {
             ),
             `is`(71)
         )
+    }
+
+    @Test
+    fun performanceTest() {
+        solvePart1(makeInputOfSide(2))
+        solvePart1(makeInputOfSide(10))
+        solvePart1(makeInputOfSide(20))
+        solvePart1(makeInputOfSide(50))
+        solvePart1(makeInputOfSide(75))
+        solvePart1(makeInputOfSide(100))
+        solvePart1(makeInputOfSide(150))
+    }
+
+    private fun makeInputOfSide(i: Int): String {
+        val random = Random(123)
+        return (0..<i).map {
+            (0..<i).map {
+                random.nextInt(10)
+            }.joinToString("")
+        }.joinToString("\n")
     }
 }
