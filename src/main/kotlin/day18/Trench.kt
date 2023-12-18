@@ -6,10 +6,10 @@ import utils.Direction.NORTH
 import utils.Direction.SOUTH
 import utils.Direction.WEST
 import utils.Laterality
-import utils.Laterality.LEFT
 import utils.Laterality.RIGHT
 import utils.Position
 import utils.getCycling
+import kotlin.math.absoluteValue
 
 /**
  * Note this class makes a number of assumptions, which seem to hold true for the given input:
@@ -21,23 +21,17 @@ class Trench private constructor(val corners: List<Corner>) {
 
     fun capacity(): Int {
 
-        val edges = edges()
-
-        val interiorPositions = mutableSetOf<Position>()
-        val pendingToVisit = mutableListOf(Position(1, 1))
-
-        while (pendingToVisit.isNotEmpty()) {
-            val position = pendingToVisit.removeLast()
-            if (edges.contains(position) || interiorPositions.contains(position)) {
-                continue
-            }
-            interiorPositions.add(position)
-            for (direction in Direction.entries) {
-                pendingToVisit.add(position.neighbour(direction))
-            }
+        if (this.corners.size == 4) {
+            // This is a rectangle
+            val minRow = corners.minOf { it.position.row }
+            val maxRow = corners.maxOf { it.position.row }
+            val minCol = corners.minOf { it.position.col }
+            val maxCol = corners.maxOf { it.position.col }
+            return ((maxRow - minRow).absoluteValue + 1) * ((maxCol - minCol).absoluteValue + 1)
         }
 
-        return interiorPositions.size + edges.size
+        val simplified = this.simplify()
+        return simplified.first.capacity() - simplified.second
     }
 
     fun drawEdges(): String {
@@ -113,11 +107,14 @@ class Trench private constructor(val corners: List<Corner>) {
                         }
                     }
                 }
-                val areaChange = (distanceBetween.abs() + 1) * (removedDistance.abs()) * (if (side == RIGHT) -1 else 1)
+                val areaChange = if (side == RIGHT) {
+                    -(distanceBetween.abs() + 1) * (removedDistance.abs())
+                } else {
+                    (distanceBetween.abs() - 1) * (removedDistance.abs())
+                }
                 return Pair(Trench(cleanupCoinciding(newCorners)), areaChange)
             }
         }
-        TODO()
         return Pair(this, 0)
     }
 

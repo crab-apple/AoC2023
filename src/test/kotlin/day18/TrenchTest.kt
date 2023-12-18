@@ -225,6 +225,8 @@ class TrenchTest {
     """.trimIndent()
         )
 
+        println(trench.drawEdges())
+
         assertThat(
             trench.simplify().first.drawEdges(),
             `is`(
@@ -243,7 +245,7 @@ class TrenchTest {
 
         assertThat(
             trench.simplify().second,
-            `is`(9)
+            `is`(3)
         )
     }
 }
