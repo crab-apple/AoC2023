@@ -14,6 +14,6 @@ fun solvePart1(input: String): Int {
     return trench.capacity()
 }
 
-fun solvePart2(input: String): Int {
+fun solvePart2(input: String): Long {
     return 0
 }

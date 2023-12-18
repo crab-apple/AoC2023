@@ -1,10 +1,11 @@
 package day18
 
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
-import utils.Position
+import utils.Laterality.LEFT
+import utils.Laterality.RIGHT
 
 class TrenchTest {
 
@@ -12,20 +13,27 @@ class TrenchTest {
     fun testParse() {
         val trench = Trench.parse(
             """
-            R 1 (#70c710)
-            D 2 (#0dc571)
-            L 1 (#5713f0)
-            U 2 (#d2c081)
+            R 2 (#70c710)
+            D 2 (#70c710)
+            R 2 (#70c710)
+            U 2 (#70c710)
+            R 2 (#70c710)
+            D 4 (#70c710)
+            L 6 (#70c710)
+            U 4 (#70c710)
         """.trimIndent()
         )
         assertThat(
-            trench.edges, containsInAnyOrder(
-                Position(0, 0),
-                Position(0, 1),
-                Position(1, 0),
-                Position(1, 1),
-                Position(2, 0),
-                Position(2, 1),
+            trench.corners,
+            contains(
+                Corner(0, 2, RIGHT),
+                Corner(2, 2, LEFT),
+                Corner(2, 4, LEFT),
+                Corner(0, 4, RIGHT),
+                Corner(0, 6, RIGHT),
+                Corner(4, 6, RIGHT),
+                Corner(4, 0, RIGHT),
+                Corner(0, 0, RIGHT),
             )
         )
     }
@@ -49,12 +57,12 @@ class TrenchTest {
         L 2 (#015232)
         U 2 (#7a21e3)
     """.trimIndent()
-        );
+        )
 
         assertThat(
             trench.drawEdges(), `is`(
                 """
-            #######
+            @######
             #.....#
             ###...#
             ..#...#

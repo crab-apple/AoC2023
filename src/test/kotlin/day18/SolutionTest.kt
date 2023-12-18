@@ -2,6 +2,7 @@ package day18
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 
 class SolutionTest {
@@ -32,10 +33,11 @@ class SolutionTest {
     }
 
     @Test
+    @Disabled
     fun testPart2() {
         assertThat(
             solvePart2(exampleInput),
-            `is`(0)
+            `is`(952408144115)
         )
     }
 }
