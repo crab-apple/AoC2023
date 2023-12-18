@@ -1,10 +1,5 @@
 package day18
 
-import utils.Direction
-import utils.Direction.EAST
-import utils.Direction.NORTH
-import utils.Direction.SOUTH
-import utils.Direction.WEST
 import utils.Laterality
 import utils.Laterality.RIGHT
 import utils.Position
@@ -137,8 +132,12 @@ class Trench private constructor(val corners: List<Corner>) {
     companion object Parser {
 
         fun parse(input: String): Trench {
-            val inputLines = InputLine.parse(input)
+            val inputLines = InputLine.parseRegular(input)
 
+            return parse(inputLines)
+        }
+
+        fun parse(inputLines: List<InputLine>): Trench {
             val corners = mutableListOf<Corner>()
             var currentPosition = Position(0, 0)
             var currentDirection = inputLines.last().direction
@@ -160,24 +159,3 @@ data class Corner(val position: Position, val side: Laterality) {
     constructor(row: Int, col: Int, side: Laterality) : this(Position(row, col), side)
 }
 
-private class InputLine(val direction: Direction, val numSteps: Int) {
-    companion object Parser {
-
-        fun parse(input: String): List<InputLine> {
-            return input.lines().map { line ->
-                InputLine(
-                    parseDirection(line.split(" ")[0]),
-                    line.split(" ")[1].toInt()
-                )
-            }
-        }
-
-        private fun parseDirection(input: String) = when (input) {
-            "U" -> NORTH
-            "D" -> SOUTH
-            "R" -> EAST
-            "L" -> WEST
-            else -> throw IllegalArgumentException("")
-        }
-    }
-}

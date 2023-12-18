@@ -10,8 +10,7 @@ fun main() {
 }
 
 fun solvePart1(input: String): Int {
-    val trench = Trench.parse(input)
-    return trench.capacity()
+    return Trench.parse(InputLine.parseRegular(input)).capacity()
 }
 
 fun solvePart2(input: String): Long {
