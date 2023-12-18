@@ -9,10 +9,10 @@ fun main() {
     solvePart2(input).println()
 }
 
-fun solvePart1(input: String): Int {
+fun solvePart1(input: String): Long {
     return Trench.parse(InputLine.parseRegular(input)).capacity()
 }
 
 fun solvePart2(input: String): Long {
-    return 0
+    return Trench.parse(InputLine.parseHexadecimal(input)).capacity()
 }

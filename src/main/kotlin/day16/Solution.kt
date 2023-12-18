@@ -58,7 +58,7 @@ private fun makeEnergyMap(input: String, startingDirection: Pair<Position, Direc
         energized.add(position)
 
         val nextDirections = mutableListOf<Direction>()
-        val currentArtifact = artifactsGrid[position.row][position.col]
+        val currentArtifact = artifactsGrid[position.row.toInt()][position.col.toInt()]
 
         if (currentArtifact == '\\') {
             nextDirections.add(

@@ -2,14 +2,14 @@ package day18
 
 import utils.Direction
 
-data class InputLine(val direction: Direction, val numSteps: Int) {
+data class InputLine(val direction: Direction, val numSteps: Long) {
     companion object Parser {
 
         fun parseRegular(input: String): List<InputLine> {
             return input.lines().map { line ->
                 InputLine(
                     parseDirection(line.split(" ")[0]),
-                    line.split(" ")[1].toInt()
+                    line.split(" ")[1].toLong()
                 )
             }
         }
@@ -19,7 +19,7 @@ data class InputLine(val direction: Direction, val numSteps: Int) {
                 val hexDigits = line.takeLast(7).take(6)
                 InputLine(
                     parseDirection(hexDigits.takeLast(1)),
-                    hexDigits.take(5).toInt(16)
+                    hexDigits.take(5).toLong(16)
                 )
             }
         }

@@ -33,7 +33,6 @@ class SolutionTest {
     }
 
     @Test
-    @Disabled
     fun testPart2() {
         assertThat(
             solvePart2(exampleInput),

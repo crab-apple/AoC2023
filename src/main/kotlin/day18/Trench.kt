@@ -14,7 +14,7 @@ import kotlin.math.absoluteValue
  */
 class Trench private constructor(val corners: List<Corner>) {
 
-    fun capacity(): Int {
+    fun capacity(): Long {
 
         if (this.corners.size == 4) {
             // This is a rectangle
@@ -58,7 +58,7 @@ class Trench private constructor(val corners: List<Corner>) {
         return edges
     }
 
-    fun simplify(): Pair<Trench, Int> {
+    fun simplify(): Pair<Trench, Long> {
 
         for (i in corners.indices) {
             val first = corners.getCycling(i)
@@ -156,6 +156,6 @@ class Trench private constructor(val corners: List<Corner>) {
 }
 
 data class Corner(val position: Position, val side: Laterality) {
-    constructor(row: Int, col: Int, side: Laterality) : this(Position(row, col), side)
+    constructor(row: Int, col: Int, side: Laterality) : this(Position(row.toLong(), col.toLong()), side)
 }
 

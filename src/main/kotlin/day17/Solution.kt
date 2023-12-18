@@ -37,7 +37,7 @@ private fun solve(input: String, crucibleParams: CrucibleParams): Int {
         return position.row in 0..<numRows && position.col in 0..<numCols
     }
 
-    fun heatLossAtPosition(position: Position) = grid[position.row][position.col]
+    fun heatLossAtPosition(position: Position) = grid[position.row.toInt()][position.col.toInt()]
 
     val costs = mutableMapOf<State, Int>()
 

@@ -42,7 +42,7 @@ fun solvePart2(input: List<String>): Long {
     while (true) {
         println("Testing candidate $cycleLengthCandidate")
         val grid = Grid(input.joinToString("\n"))
-        val results = mutableListOf<Int>()
+        val results = mutableListOf<Long>()
         for (i in 0..10) {
             for (i in 1..cycleLengthCandidate) {
                 cycle(grid)
@@ -118,7 +118,7 @@ class Grid(str: String) {
 
         val newRockPositions = mutableSetOf<Position>()
 
-        val sorting: (Position) -> Int = {
+        val sorting: (Position) -> Long = {
             when (direction) {
                 WEST -> it.col
                 EAST -> -it.col
@@ -158,7 +158,7 @@ class Grid(str: String) {
         }
     }
 
-    fun northLoad(): Int = currentRockPositions.sumOf { numRows - it.row }
+    fun northLoad(): Long = currentRockPositions.sumOf { numRows - it.row }
 }
 
 private fun <T> Iterable<T>.indexesOf(c: T) = withIndex().filter { it.value == c }.map { it.index }
