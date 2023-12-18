@@ -38,3 +38,8 @@ fun rotateClockwise(lines: List<String>): List<String> {
 fun rotateCounterClockwise(lines: List<String>): List<String> {
     return transpose(lines).reversed()
 }
+
+fun <T> List<T>.getCycling(index: Int): T {
+    return this[(index + this.size) % this.size]
+}
+

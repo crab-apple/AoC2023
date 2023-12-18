@@ -110,4 +110,140 @@ class TrenchTest {
 
         assertThat(trench.capacity(), `is`(33))
     }
+
+    @Test
+    fun `simplify trench, convex with limit before`() {
+        val trench = Trench.parse(
+            """
+        R 2
+        D 2
+        R 2
+        D 2
+        L 4
+        U 4
+    """.trimIndent()
+        )
+
+        assertThat(
+            trench.simplify().first.drawEdges(),
+            `is`(
+                """
+                @##
+                #.#
+                #.#
+                #.#
+                ###
+            """.trimIndent()
+            )
+        )
+
+        assertThat(
+            trench.simplify().second,
+            `is`(-6)
+        )
+    }
+
+    @Test
+    fun `simplify trench, convex with limit after`() {
+
+        val trench = Trench.parse(
+            """
+        R 4
+        D 2
+        L 2
+        D 2
+        L 2
+        U 4
+    """.trimIndent()
+        )
+
+        assertThat(
+            trench.simplify().first.drawEdges(),
+            `is`(
+                """
+                @##
+                #.#
+                #.#
+                #.#
+                ###
+            """.trimIndent()
+            )
+        )
+
+        assertThat(
+            trench.simplify().second,
+            `is`(-6)
+        )
+    }
+
+    @Test
+    fun `simplify trench, convex with limit before and after`() {
+
+        val trench = Trench.parse(
+            """
+        R 2
+        U 2
+        R 2
+        D 2
+        R 2
+        D 2
+        L 6
+        U 2
+    """.trimIndent()
+        )
+
+        assertThat(
+            trench.simplify().first.drawEdges(),
+            `is`(
+                """
+                @######
+                #.....#
+                #######
+            """.trimIndent()
+            )
+        )
+
+        assertThat(
+            trench.simplify().second,
+            `is`(-6)
+        )
+    }
+
+    @Test
+    fun `simplify trench, concave`() {
+
+        val trench = Trench.parse(
+            """
+        R 2
+        D 3
+        R 2
+        U 5
+        R 2
+        D 7
+        L 6
+        U 7
+    """.trimIndent()
+        )
+
+        assertThat(
+            trench.simplify().first.drawEdges(),
+            `is`(
+                """
+                ....###
+                ....#.#
+                @####.#
+                #.....#
+                #.....#
+                #.....#
+                #.....#
+                #######
+            """.trimIndent()
+            )
+        )
+
+        assertThat(
+            trench.simplify().second,
+            `is`(9)
+        )
+    }
 }

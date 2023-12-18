@@ -1,5 +1,6 @@
 package utils
 
+import kotlin.math.abs
 import kotlin.math.sign
 
 data class Position(val row: Int, val col: Int) {
@@ -18,8 +19,16 @@ data class Position(val row: Int, val col: Int) {
         return plus(delta)
     }
 
-    fun plus(delta: Position): Position {
-        return Position(row + delta.row, col + delta.col)
+    operator fun plus(other: Position): Position {
+        return Position(row + other.row, col + other.col)
+    }
+
+    operator fun minus(other: Position): Position {
+        return Position(row - other.row, col - other.col)
+    }
+
+    fun abs(): Int {
+        return abs(row) + abs(col)
     }
 
     fun until(other: Position): List<Position> {
