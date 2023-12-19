@@ -45,12 +45,11 @@ class SolutionTest {
         )
     }
 
-
     @Test
     fun testPart2() {
         assertThat(
             solvePart2(exampleInput),
-            `is`(0)
+            `is`(167409079868000)
         )
     }
 }

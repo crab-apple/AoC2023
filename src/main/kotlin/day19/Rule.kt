@@ -43,7 +43,7 @@ class Rule private constructor(
             }
 
             val firstConditional = input[0]
-            val predicate = PartPredicate.parse(firstConditional.split(":")[0])
+            val predicate = RangeSetPredicate.parse(firstConditional.split(":")[0])
             val resultIfTrue = firstConditional.split(":")[1]
 
             val nextBranchName: String

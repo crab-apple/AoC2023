@@ -2,40 +2,47 @@ package day19
 
 class RuleSet(ruleList: List<Rule>) {
 
-    private val predicates: List<PartPredicate>
+    private val predicate: PartPredicate
 
     init {
         val branches = ruleList.flatMap { it.branches.entries }.associate { Pair(it.key, it.value) }
-        predicates = branchToPredicateList(branches["in"]!!, branches)
+        predicate = branchToPredicate(branches["in"]!!, branches)
     }
 
-    private fun branchToPredicateList(branch: Branch, branches: Map<String, Branch>): List<PartPredicate> {
+    private fun branchToPredicate(branch: Branch, branches: Map<String, Branch>): PartPredicate {
+
         val result = mutableListOf<PartPredicate>()
+
         if (branch.resultIfTrue == "A") {
             result.add(branch.predicate)
         } else if (branch.resultIfTrue != "R") {
-            result.addAll(
-                branchToPredicateList(
+            result.add(
+                branchToPredicate(
                     branches[branch.resultIfTrue]!!,
                     branches
-                ).map { it.and(branch.predicate) })
+                ).and(branch.predicate)
+            )
         }
 
         if (branch.resultIfFalse == "A") {
-            result.addAll(branch.predicate.negated())
+            result.add(branch.predicate.negate())
         } else if (branch.resultIfFalse != "R") {
-            result.addAll(
-                branchToPredicateList(
+            result.add(
+                branchToPredicate(
                     branches[branch.resultIfFalse]!!,
                     branches
-                ).flatMap { a -> branch.predicate.negated().map { a.and(it) } })
+                ).and(branch.predicate.negate())
+            )
         }
-        return result
+        return OrPredicate(result)
     }
 
     fun accepted(part: Part): Boolean {
-        return predicates.any { it.test(part) }
+        return predicate.test(part)
     }
 
-    override fun toString() = predicates.joinToString("\n")
+    override fun toString() = predicate.toString()
+    fun numAcceptedParts(): Long {
+        return predicate.numAcceptedParts()
+    }
 }

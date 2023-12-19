@@ -41,17 +41,17 @@ class RuleTest {
         val rule = rule("foo{a<100:abc,a<200:def,R}")
 
         assertThat(
-            rule.evaluate(Part.parse("{x=0,m=0,a=0,s=0}")),
+            rule.evaluate(Part.parse("{x=1,m=1,a=1,s=1}")),
             `is`("abc")
         )
 
         assertThat(
-            rule.evaluate(Part.parse("{x=0,m=0,a=150,s=0}")),
+            rule.evaluate(Part.parse("{x=1,m=1,a=150,s=1}")),
             `is`("def")
         )
 
         assertThat(
-            rule.evaluate(Part.parse("{x=0,m=0,a=250,s=0}")),
+            rule.evaluate(Part.parse("{x=1,m=1,a=250,s=1}")),
             `is`("R")
         )
     }
