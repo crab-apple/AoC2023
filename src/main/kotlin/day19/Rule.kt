@@ -4,7 +4,7 @@ import java.util.*
 
 class Rule private constructor(
     private val name: String,
-    private val branches: Map<String, Branch>
+    val branches: Map<String, Branch>
 ) {
 
     fun name(): String {
@@ -27,13 +27,16 @@ class Rule private constructor(
             val name = input.substringBefore("{")
             val contents = input.removePrefix(name).removeSurrounding("{", "}")
 
-            val branches = parseBranches(contents.split(","), name)
-                .associateBy { it.name }
-
+            val branches = mutableMapOf<String, Branch>()
+            parseBranches(contents.split(","), name, branches)
             return Rule(name, branches)
         }
 
-        private fun parseBranches(input: List<String>, firstBranchName: String): List<Branch> {
+        private fun parseBranches(
+            input: List<String>,
+            firstBranchName: String,
+            accumulator: MutableMap<String, Branch>
+        ) {
 
             if (input.size < 2) {
                 throw IllegalArgumentException()
@@ -43,27 +46,19 @@ class Rule private constructor(
             val predicate = parsePredicate(firstConditional.split(":")[0])
             val resultIfTrue = firstConditional.split(":")[1]
 
+            val nextBranchName: String
             if (input.size == 2) {
-                return listOf(
-                    Branch(
-                        firstBranchName,
-                        predicate,
-                        resultIfTrue,
-                        input[1]
-                    )
-                )
+                nextBranchName = input[1]
+            } else {
+                nextBranchName = UUID.randomUUID().toString()
+                parseBranches(input.drop(1), nextBranchName, accumulator)
             }
 
-            val nextBranchName = UUID.randomUUID().toString()
-            return parseBranches(input.drop(1), nextBranchName)
-                .plus(
-                    Branch(
-                        firstBranchName,
-                        predicate,
-                        resultIfTrue,
-                        nextBranchName
-                    )
-                )
+            accumulator[firstBranchName] = Branch(
+                predicate,
+                resultIfTrue,
+                nextBranchName
+            )
         }
 
         private fun parsePredicate(input: String): (Part) -> Boolean {

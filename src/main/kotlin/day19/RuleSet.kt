@@ -2,22 +2,19 @@ package day19
 
 class RuleSet(ruleList: List<Rule>) {
 
-    private val rules: Map<String, Rule>
+    private val branches: Map<String, Branch>
 
     init {
-        rules = ruleList.associateBy { it.name() }
+        branches = ruleList.flatMap { it.branches.entries }.associate { Pair(it.key, it.value) }
     }
 
     fun accepted(part: Part): Boolean {
-        return evaluate(part, "in")
+        return evaluateBranch(part, "in") == "A"
     }
 
-    private fun evaluate(part: Part, ruleName: String): Boolean {
-        val rule = rules[ruleName]!!
-        return when (val result = rule.evaluate(part)) {
-            "A" -> true
-            "R" -> false
-            else -> evaluate(part, result)
-        }
+    private fun evaluateBranch(part: Part, branchName: String): String {
+        val branch = branches[branchName] ?: return branchName
+        val result: String = if (branch.predicate.test(part)) branch.resultIfTrue else branch.resultIfFalse
+        return evaluateBranch(part, result)
     }
 }
