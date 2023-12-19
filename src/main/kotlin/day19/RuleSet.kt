@@ -1,18 +1,16 @@
 package day19
 
-import java.util.function.Predicate
-
 class RuleSet(ruleList: List<Rule>) {
 
-    private val predicates: List<Predicate<Part>>
+    private val predicates: List<PartPredicate>
 
     init {
         val branches = ruleList.flatMap { it.branches.entries }.associate { Pair(it.key, it.value) }
         predicates = branchToPredicateList(branches["in"]!!, branches)
     }
 
-    private fun branchToPredicateList(branch: Branch, branches: Map<String, Branch>): List<Predicate<Part>> {
-        val result = mutableListOf<Predicate<Part>>()
+    private fun branchToPredicateList(branch: Branch, branches: Map<String, Branch>): List<PartPredicate> {
+        val result = mutableListOf<PartPredicate>()
         if (branch.resultIfTrue == "A") {
             result.add(branch.predicate)
         } else if (branch.resultIfTrue != "R") {
@@ -24,13 +22,13 @@ class RuleSet(ruleList: List<Rule>) {
         }
 
         if (branch.resultIfFalse == "A") {
-            result.add(branch.predicate.negate())
+            result.addAll(branch.predicate.negated())
         } else if (branch.resultIfFalse != "R") {
             result.addAll(
                 branchToPredicateList(
                     branches[branch.resultIfFalse]!!,
                     branches
-                ).map { it.and(branch.predicate.negate()) })
+                ).flatMap { a -> branch.predicate.negated().map { a.and(it) } })
         }
         return result
     }

@@ -1,10 +1,8 @@
 package day19
 
-import java.util.function.Predicate
+class PartPredicate(private val ranges: Map<Category, IntRange>) {
 
-class PartPredicate(private val ranges: Map<Category, IntRange>) : Predicate<Part> {
-
-    override fun test(part: Part): Boolean {
+    fun test(part: Part): Boolean {
         return ranges.all { it.value.contains(part[it.key]) }
     }
 
@@ -15,9 +13,29 @@ class PartPredicate(private val ranges: Map<Category, IntRange>) : Predicate<Par
     fun and(other: PartPredicate): PartPredicate {
         return PartPredicate(Category.entries.associateWith { category ->
             val thisRange = ranges[category]!!
-            val otherRange = ranges[category]!!
+            val otherRange = other.ranges[category]!!
             IntRange(maxOf(thisRange.first, otherRange.first), minOf(thisRange.last, otherRange.last))
         })
+    }
+
+    fun negated(): List<PartPredicate> {
+
+        val acceptingAll = Category.entries.associateWith { IntRange(0, 4000) }
+
+        val result = mutableListOf<PartPredicate>()
+        for (category in Category.entries) {
+            val range = ranges[category]!!
+            for (inversePart in invertRange(range)) {
+                if (!inversePart.isEmpty()) {
+                    result.add(PartPredicate(acceptingAll.plus(Pair(category, inversePart))))
+                }
+            }
+        }
+        return result
+    }
+
+    private fun invertRange(range: IntRange): List<IntRange> {
+        return listOf(IntRange(0, range.first - 1), IntRange(range.last + 1, 4000))
     }
 
     companion object {
