@@ -3,6 +3,7 @@ package day19
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Disabled
+import utils.readInputOneString
 import kotlin.test.Test
 
 class SolutionTest {
@@ -34,6 +35,16 @@ class SolutionTest {
             `is`(19114)
         )
     }
+
+    @Test
+    fun testPart1BigInput() {
+        val input = readInputOneString("day19/input")
+        assertThat(
+            solvePart1(input),
+            `is`(350678)
+        )
+    }
+
 
     @Test
     fun testPart2() {
