@@ -43,7 +43,7 @@ class Rule private constructor(
             }
 
             val firstConditional = input[0]
-            val predicate = parsePredicate(firstConditional.split(":")[0])
+            val predicate = PartPredicate.parse(firstConditional.split(":")[0])
             val resultIfTrue = firstConditional.split(":")[1]
 
             val nextBranchName: String
@@ -59,12 +59,6 @@ class Rule private constructor(
                 resultIfTrue,
                 nextBranchName
             )
-        }
-
-        private fun parsePredicate(input: String): PartPredicate {
-            val category = input.split("[<>]".toRegex())[0].let { Category.parse(it) }
-            val threshold = input.split("[<>]".toRegex())[1].toInt()
-            return PartPredicate(category, threshold, input.first { it == '<' || it == '>' })
         }
     }
 }
