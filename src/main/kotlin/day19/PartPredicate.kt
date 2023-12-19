@@ -12,6 +12,14 @@ class PartPredicate(private val ranges: Map<Category, IntRange>) : Predicate<Par
         return ranges.map { "${it.key}${it.value}" }.joinToString()
     }
 
+    fun and(other: PartPredicate): PartPredicate {
+        return PartPredicate(Category.entries.associateWith { category ->
+            val thisRange = ranges[category]!!
+            val otherRange = ranges[category]!!
+            IntRange(maxOf(thisRange.first, otherRange.first), minOf(thisRange.last, otherRange.last))
+        })
+    }
+
     companion object {
 
         fun of(category: Category, threshold: Int, operation: Char): PartPredicate {
