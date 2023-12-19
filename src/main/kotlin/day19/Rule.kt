@@ -1,10 +1,10 @@
 package day19
 
-import java.util.function.Predicate
+import java.util.*
 
 class Rule private constructor(
     private val name: String,
-    private val conditionals: List<Conditional>
+    private val branches: Map<String, Branch>
 ) {
 
     fun name(): String {
@@ -12,12 +12,13 @@ class Rule private constructor(
     }
 
     fun evaluate(part: Part): String {
-        for (conditional in conditionals) {
-            if (conditional.predicate.test(part)) {
-                return conditional.resultIfTrue
-            }
-        }
-        throw RuntimeException("Cannot be")
+        return evaluateBranch(part, name)
+    }
+
+    private fun evaluateBranch(part: Part, branchName: String): String {
+        val branch = branches[branchName] ?: return branchName
+        val result: String = if (branch.predicate.test(part)) branch.resultIfTrue else branch.resultIfFalse
+        return evaluateBranch(part, result)
     }
 
     companion object Parser {
@@ -25,33 +26,53 @@ class Rule private constructor(
         fun parse(input: String): Rule {
             val name = input.substringBefore("{")
             val contents = input.removePrefix(name).removeSurrounding("{", "}")
-            val conditionals = contents.split(",").map { Conditional.parse(it) }
 
-            return Rule(name, conditionals)
+            val branches = parseBranches(contents.split(","), name)
+                .associateBy { it.name }
+
+            return Rule(name, branches)
         }
-    }
 
-    private class Conditional(val predicate: Predicate<Part>, val resultIfTrue: String) {
-        companion object Parser {
+        private fun parseBranches(input: List<String>, firstBranchName: String): List<Branch> {
 
-            fun parse(input: String): Conditional {
-                return if (input.contains(":")) {
-                    val predicate = input.split(":")[0].let { parsePredicate(it) }
-                    val result = input.split(":")[1]
-                    Conditional(predicate, result)
-                } else {
-                    Conditional({ true }, input)
-                }
+            if (input.size < 2) {
+                throw IllegalArgumentException()
             }
 
-            private fun parsePredicate(input: String): (Part) -> Boolean {
-                val category = input.split("[<>]".toRegex())[0].let { Category.parse(it) }
-                val threshold = input.split("[<>]".toRegex())[1].toLong()
-                return if (input.contains("<")) { it ->
-                    it[category] < threshold
-                } else { it ->
-                    it[category] > threshold
-                }
+            val firstConditional = input[0]
+            val predicate = parsePredicate(firstConditional.split(":")[0])
+            val resultIfTrue = firstConditional.split(":")[1]
+
+            if (input.size == 2) {
+                return listOf(
+                    Branch(
+                        firstBranchName,
+                        predicate,
+                        resultIfTrue,
+                        input[1]
+                    )
+                )
+            }
+
+            val nextBranchName = UUID.randomUUID().toString()
+            return parseBranches(input.drop(1), nextBranchName)
+                .plus(
+                    Branch(
+                        firstBranchName,
+                        predicate,
+                        resultIfTrue,
+                        nextBranchName
+                    )
+                )
+        }
+
+        private fun parsePredicate(input: String): (Part) -> Boolean {
+            val category = input.split("[<>]".toRegex())[0].let { Category.parse(it) }
+            val threshold = input.split("[<>]".toRegex())[1].toLong()
+            return if (input.contains("<")) { it ->
+                it[category] < threshold
+            } else { it ->
+                it[category] > threshold
             }
         }
     }
