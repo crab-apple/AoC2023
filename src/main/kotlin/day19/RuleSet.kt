@@ -17,4 +17,6 @@ class RuleSet(ruleList: List<Rule>) {
         val result: String = if (branch.predicate.test(part)) branch.resultIfTrue else branch.resultIfFalse
         return evaluateBranch(part, result)
     }
+
+    override fun toString() = branches.map { it.toString() }.joinToString("\n")
 }

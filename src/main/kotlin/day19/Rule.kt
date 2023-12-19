@@ -61,14 +61,10 @@ class Rule private constructor(
             )
         }
 
-        private fun parsePredicate(input: String): (Part) -> Boolean {
+        private fun parsePredicate(input: String): PartPredicate {
             val category = input.split("[<>]".toRegex())[0].let { Category.parse(it) }
-            val threshold = input.split("[<>]".toRegex())[1].toLong()
-            return if (input.contains("<")) { it ->
-                it[category] < threshold
-            } else { it ->
-                it[category] > threshold
-            }
+            val threshold = input.split("[<>]".toRegex())[1].toInt()
+            return PartPredicate(category, threshold, input.first { it == '<' || it == '>' })
         }
     }
 }

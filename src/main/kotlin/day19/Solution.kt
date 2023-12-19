@@ -17,6 +17,8 @@ fun solvePart1(input: String): Long {
     val ruleSet = RuleSet(ruleLines.map { Rule.parse(it) })
     val parts = partLines.map { Part.parse(it) }
 
+    println(ruleSet)
+
     return parts.filter { ruleSet.accepted(it) }.sumOf { it.addRatings() }
 }
 
