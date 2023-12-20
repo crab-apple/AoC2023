@@ -10,6 +10,8 @@ class ConjunctionModule : Module {
         recentInputs[input] = false
     }
 
+    fun inputs(): Set<String> = recentInputs.keys
+
     override fun receive(message: Message): Boolean {
         recentInputs[message.origin] = message.high
         return !recentInputs.all { it.value }

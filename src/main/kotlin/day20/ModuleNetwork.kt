@@ -6,7 +6,10 @@ import day20.module.FlipFlopModule
 import day20.module.Module
 import java.util.*
 
-class ModuleNetwork(private val modules: Map<String, Module>, private val connections: Map<String, List<String>>) {
+class ModuleNetwork(
+    val modules: MutableMap<String, Module>,
+    val connections: MutableMap<String, List<String>>
+) {
 
     var lowCount = 0L
     var highCount = 0L
@@ -26,7 +29,10 @@ class ModuleNetwork(private val modules: Map<String, Module>, private val connec
         }
     }
 
-    fun pushButton() {
+    fun pushButton(): List<Message> {
+
+        val sentMessages = mutableListOf<Message>()
+
         messageQueue.add(Message(false, "button", "broadcaster"))
         while (messageQueue.isNotEmpty()) {
 
@@ -43,6 +49,21 @@ class ModuleNetwork(private val modules: Map<String, Module>, private val connec
                     }
                 }
             }
+
+            sentMessages.add(message)
+        }
+
+        return sentMessages
+    }
+
+    override fun toString(): String {
+        return connections.entries.joinToString("\n") {
+            val prefix = when (modules[it.key]) {
+                is FlipFlopModule -> "%"
+                is ConjunctionModule -> "&"
+                else -> ""
+            }
+            "${prefix}${it.key} -> ${it.value.joinToString(", ")}"
         }
     }
 
