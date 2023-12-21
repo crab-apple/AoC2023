@@ -1,6 +1,7 @@
 package day21
 
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Disabled
 import utils.readInputOneString
@@ -39,11 +40,10 @@ class SolutionTest {
     }
 
     @Test
-    @Disabled
     fun testPart2RealInput() {
         assertThat(
             solvePart2(readInputOneString("day21/input")),
-            `is`(0)
+            `is`(613391294577878)
         )
     }
 }
