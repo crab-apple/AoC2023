@@ -10,6 +10,8 @@ data class Position(val row: Long, val col: Long) {
 
     fun neighbour(direction: Direction) = moving(direction, 1)
 
+    fun allNeighbours() = Direction.entries.map { neighbour(it) }
+
     fun moving(direction: Direction, distance: Long): Position {
 
         val delta = when (direction) {
