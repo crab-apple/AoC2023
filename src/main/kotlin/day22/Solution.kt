@@ -10,7 +10,7 @@ fun main() {
 }
 
 fun solvePart1(input: String): Long {
-    return 0
+    return BrickStack(parseInput(input)).numDisintegrable()
 }
 
 fun solvePart2(input: String): Long {

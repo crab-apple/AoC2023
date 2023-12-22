@@ -2,7 +2,9 @@ package day22
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Disabled
 import utils.readInputOneString
+import kotlin.random.Random
 import kotlin.test.Test
 
 class SolutionTest {
@@ -14,22 +16,33 @@ class SolutionTest {
                 0,0,4~0,2,4
                 2,0,5~2,2,5
                 0,1,6~2,1,6
-                1,1,8~1,1,9 
+                1,1,8~1,1,9
                    """.trimIndent()
 
     @Test
     fun testPart1() {
         assertThat(
             solvePart1(exampleInput),
-            `is`(0)
+            `is`(5)
         )
+    }
+
+    @Test
+    fun testPart1RandomOrder() {
+        for (seed in 0..10) {
+            val input = exampleInput.lines().shuffled(Random(seed)).joinToString("\n")
+            assertThat(
+                solvePart1(input),
+                `is`(5)
+            )
+        }
     }
 
     @Test
     fun testPart1RealInput() {
         assertThat(
             solvePart1(readInputOneString("day22/input")),
-            `is`(0)
+            `is`(505)
         )
     }
 

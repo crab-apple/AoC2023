@@ -6,14 +6,14 @@ class BrickStack(input: List<Brick> = listOf()) {
 
     init {
         bricks = mutableListOf()
-        for (floatingBrick in input) {
+        for (floatingBrick in input.sortedBy { it.z.first }) {
             var restingLevel = floatingBrick.z.first
             while (true) {
                 var levelBelow = restingLevel - 1
                 if (levelBelow == 0) {
                     break
                 }
-                if (floatingBrick.hSection().any { occupied(it.first, it.second, levelBelow) }) {
+                if (occupied(floatingBrick.hSection(), levelBelow)) {
                     break
                 }
                 restingLevel = levelBelow
@@ -22,8 +22,16 @@ class BrickStack(input: List<Brick> = listOf()) {
         }
     }
 
-    private fun occupied(x: Int, y: Int, z: Int): Boolean {
-        return bricks.any { it.contains(x, y, z) }
+    private fun occupied(hSection: HSection, z: Int): Boolean {
+        return bricksAt(hSection, z).isNotEmpty()
+    }
+
+    private fun bricksAt(hSection: HSection, z: Int): Set<Int> {
+        return hSection.points().mapNotNull { brickAt(it.first, it.second, z) }.toSet()
+    }
+
+    private fun brickAt(x: Int, y: Int, z: Int): Int? {
+        return bricks.indexOfFirst { it.contains(x, y, z) }.let { if (it == -1) null else it }
     }
 
     fun viewX(): String {
@@ -32,6 +40,26 @@ class BrickStack(input: List<Brick> = listOf()) {
 
     fun viewY(): String {
         return ViewDrawer().draw(HorizontalAxis.Y)
+    }
+
+    fun numDisintegrable(): Long {
+        val supportedBy = mutableMapOf<Int, Set<Int>>()
+        bricks.forEachIndexed { index, brick ->
+            val supporters = bricksAt(brick.hSection(), brick.z.first - 1)
+            supportedBy[index] = supporters
+        }
+
+        val supports = mutableMapOf<Int, MutableSet<Int>>()
+        supportedBy.entries.forEach { (supported, supporters) ->
+            supporters.forEach { supporter ->
+                supports.computeIfAbsent(supporter) { mutableSetOf() }.add(supported)
+            }
+        }
+
+        return bricks.indices.count { index ->
+            val supportedByMe = supports[index] ?: setOf()
+            supportedByMe.all { supportedBy[it]!!.size > 1 }
+        }.toLong()
     }
 
     inner class ViewDrawer {

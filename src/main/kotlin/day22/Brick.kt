@@ -12,9 +12,7 @@ data class Brick(val x: IntRange, val y: IntRange, val z: IntRange) {
                 (z == null || this.z.contains(z))
     }
 
-    fun hSection(): List<Pair<Int, Int>> {
-        return x.flatMap { eachX -> y.map { Pair(eachX, it) } }
-    }
+    fun hSection() = HSection(x, y)
 
     fun atZ(z: Int): Brick {
         return Brick(
