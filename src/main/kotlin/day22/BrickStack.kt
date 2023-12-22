@@ -2,10 +2,10 @@ package day22
 
 class BrickStack(input: List<Brick> = listOf()) {
 
-    private val bricks: MutableList<Brick>
+    private val bricks: MutableList<Brick> = mutableListOf()
+    private val bricksByTopLevel: MutableMap<Int, MutableSet<Brick>> = mutableMapOf()
 
     init {
-        bricks = mutableListOf()
         for (floatingBrick in input.sortedBy { it.z.first }) {
             var restingLevel = floatingBrick.z.first
             while (true) {
@@ -18,7 +18,9 @@ class BrickStack(input: List<Brick> = listOf()) {
                 }
                 restingLevel = levelBelow
             }
-            bricks.add(floatingBrick.atZ(restingLevel))
+            val restingBrick = floatingBrick.atZ(restingLevel)
+            bricks.add(restingBrick)
+            bricksByTopLevel.computeIfAbsent(restingBrick.z.last) { mutableSetOf() }.add(restingBrick)
         }
     }
 
@@ -26,12 +28,12 @@ class BrickStack(input: List<Brick> = listOf()) {
         return bricksAt(hSection, z).isNotEmpty()
     }
 
-    private fun bricksAt(hSection: HSection, z: Int): Set<Int> {
+    private fun bricksAt(hSection: HSection, z: Int): Set<Brick> {
         return hSection.points().mapNotNull { brickAt(it.first, it.second, z) }.toSet()
     }
 
-    private fun brickAt(x: Int, y: Int, z: Int): Int? {
-        return bricks.indexOfFirst { it.contains(x, y, z) }.let { if (it == -1) null else it }
+    private fun brickAt(x: Int, y: Int, z: Int): Brick? {
+        return (bricksByTopLevel[z] ?: setOf()).singleOrNull { it.contains(x, y, z) }
     }
 
     fun viewX(): String {
@@ -43,21 +45,21 @@ class BrickStack(input: List<Brick> = listOf()) {
     }
 
     fun numDisintegrable(): Long {
-        val supportedBy = mutableMapOf<Int, Set<Int>>()
-        bricks.forEachIndexed { index, brick ->
+        val supportedBy = mutableMapOf<Brick, Set<Brick>>()
+        bricks.forEach { brick ->
             val supporters = bricksAt(brick.hSection(), brick.z.first - 1)
-            supportedBy[index] = supporters
+            supportedBy[brick] = supporters
         }
 
-        val supports = mutableMapOf<Int, MutableSet<Int>>()
+        val supports = mutableMapOf<Brick, MutableSet<Brick>>()
         supportedBy.entries.forEach { (supported, supporters) ->
             supporters.forEach { supporter ->
                 supports.computeIfAbsent(supporter) { mutableSetOf() }.add(supported)
             }
         }
 
-        return bricks.indices.count { index ->
-            val supportedByMe = supports[index] ?: setOf()
+        return bricks.count { brick ->
+            val supportedByMe = supports[brick] ?: setOf()
             supportedByMe.all { supportedBy[it]!!.size > 1 }
         }.toLong()
     }
@@ -109,11 +111,11 @@ class BrickStack(input: List<Brick> = listOf()) {
         private fun viewSpotFromSide(hAxis: HorizontalAxis, hIndex: Int, vIndex: Int): Char {
             val x: Int? = if (hAxis == HorizontalAxis.X) hIndex else null
             val y: Int? = if (hAxis == HorizontalAxis.X) null else hIndex
-            val crossingIndices =
-                bricks.mapIndexedNotNull { index, brick -> if (brick.crosses(x, y, vIndex)) index else null }
-            if (crossingIndices.size == 1) {
-                return 'A'.plus(crossingIndices.single())
-            } else if (crossingIndices.isNotEmpty()) {
+            val crossingBricks =
+                bricks.filter { it.crosses(x, y, vIndex) }
+            if (crossingBricks.size == 1) {
+                return crossingBricks.single().name
+            } else if (crossingBricks.isNotEmpty()) {
                 return '?'
             }
             return '.'

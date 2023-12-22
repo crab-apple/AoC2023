@@ -16,9 +16,9 @@ class InputParsingTest {
                         1,2,8~3,4,9
                            """.trimIndent()
             ),
-            Matchers.containsInAnyOrder(
-                Brick(0 to 2, 0 to 0, 2 to 2),
-                Brick(1 to 3, 2 to 4, 8 to 9),
+            Matchers.contains(
+                Brick('A', 0 to 2, 0 to 0, 2 to 2),
+                Brick('B', 1 to 3, 2 to 4, 8 to 9),
             )
         )
     }

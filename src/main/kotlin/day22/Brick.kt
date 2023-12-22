@@ -1,8 +1,13 @@
 package day22
 
-data class Brick(val x: IntRange, val y: IntRange, val z: IntRange) {
+data class Brick(val name: Char, val x: IntRange, val y: IntRange, val z: IntRange) {
 
-    constructor(x: Pair<Int, Int>, y: Pair<Int, Int>, z: Pair<Int, Int>) : this(x.toRange(), y.toRange(), z.toRange())
+    constructor(name: Char, x: Pair<Int, Int>, y: Pair<Int, Int>, z: Pair<Int, Int>) : this(
+        name,
+        x.toRange(),
+        y.toRange(),
+        z.toRange()
+    )
 
     fun contains(x: Int, y: Int, z: Int) = crosses(x, y, z)
 
@@ -16,6 +21,7 @@ data class Brick(val x: IntRange, val y: IntRange, val z: IntRange) {
 
     fun atZ(z: Int): Brick {
         return Brick(
+            this.name,
             this.x,
             this.y,
             IntRange(z, z + this.z.last - this.z.first)

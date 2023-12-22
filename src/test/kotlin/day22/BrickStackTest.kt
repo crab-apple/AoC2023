@@ -27,7 +27,7 @@ class BrickStackTest {
     fun testCompositionOneBrickAlreadyFallen() {
         val stack = BrickStack(
             listOf(
-                Brick(1 to 1, 1 to 2, 1 to 1)
+                Brick('A', 1 to 1, 1 to 2, 1 to 1)
             )
         )
 
@@ -47,8 +47,8 @@ class BrickStackTest {
     fun testCompositionTwoBricksAlreadyFallen() {
         val stack = BrickStack(
             listOf(
-                Brick(1 to 1, 1 to 2, 1 to 1),
-                Brick(0 to 2, 2 to 2, 2 to 5),
+                Brick('A', 1 to 1, 1 to 2, 1 to 1),
+                Brick('B', 0 to 2, 2 to 2, 2 to 5),
             )
         )
 
@@ -71,8 +71,8 @@ class BrickStackTest {
     fun testCompositionTwoBricksAlreadyFallenOverlapping() {
         val stack = BrickStack(
             listOf(
-                Brick(1 to 1, 0 to 1, 1 to 1),
-                Brick(0 to 2, 2 to 2, 1 to 4),
+                Brick('A', 1 to 1, 0 to 1, 1 to 1),
+                Brick('B', 0 to 2, 2 to 2, 1 to 4),
             )
         )
 
@@ -94,7 +94,7 @@ class BrickStackTest {
     fun testFallingBrick() {
         val stack = BrickStack(
             listOf(
-                Brick(1 to 1, 1 to 1, 2 to 2),
+                Brick('A', 1 to 1, 1 to 1, 2 to 2),
             )
         )
 
