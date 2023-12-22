@@ -1,16 +1,16 @@
 package day22
 
-class BrickStack(bricks: List<Brick> = listOf()) {
+class BrickStack(private val bricks: List<Brick> = listOf()) {
 
     fun viewX(): String {
-        return ViewDrawer().draw(ViewDrawer.HorizontalAxis.X)
+        return ViewDrawer().draw(HorizontalAxis.X)
     }
 
     fun viewY(): String {
-        return ViewDrawer().draw(ViewDrawer.HorizontalAxis.Y)
+        return ViewDrawer().draw(HorizontalAxis.Y)
     }
 
-    internal class ViewDrawer {
+    inner class ViewDrawer {
 
         fun draw(hAxis: HorizontalAxis): String {
             val sb = StringBuilder()
@@ -19,11 +19,13 @@ class BrickStack(bricks: List<Brick> = listOf()) {
             drawHAxis(sb, hAxis)
 
             // Content
-            val vAxisLegendPosition = hAxisLen() / 2
-            (1..<vAxisLen()).reversed().forEach {
-                sb.append(".".repeat(hAxisLen()))
-                sb.append(" $it")
-                if (it == vAxisLegendPosition) {
+            val vAxisLegendPosition = vAxisLen() / 2
+            (1..<vAxisLen()).reversed().forEach { vIndex ->
+                (0..<hAxisLen()).forEach { hIndex ->
+                    sb.append(viewSpotFromSide(hAxis, hIndex, vIndex))
+                }
+                sb.append(" $vIndex")
+                if (vIndex == vAxisLegendPosition) {
                     sb.append(" z")
                 }
                 sb.appendLine()
@@ -45,8 +47,26 @@ class BrickStack(bricks: List<Brick> = listOf()) {
         }
 
         private fun hAxisLen() = 3
-        private fun vAxisLen() = 3
+        private fun vAxisLen(): Int {
+            if (bricks.isEmpty()) {
+                return 3
+            }
+            return (bricks.maxOf { it.z.last } + 1).coerceAtLeast(3)
+        }
 
-        enum class HorizontalAxis { X, Y }
+        private fun viewSpotFromSide(hAxis: HorizontalAxis, hIndex: Int, vIndex: Int): Char {
+            val x: Int? = if (hAxis == HorizontalAxis.X) hIndex else null
+            val y: Int? = if (hAxis == HorizontalAxis.X) null else hIndex
+            val crossingIndices =
+                bricks.mapIndexedNotNull { index, brick -> if (brick.crosses(x, y, vIndex)) index else null }
+            if (crossingIndices.size == 1) {
+                return 'A'.plus(crossingIndices.single())
+            } else if (crossingIndices.isNotEmpty()) {
+                return '?'
+            }
+            return '.'
+        }
     }
+
+    enum class HorizontalAxis { X, Y }
 }

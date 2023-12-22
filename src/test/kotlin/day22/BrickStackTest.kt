@@ -2,7 +2,6 @@ package day22
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 
@@ -12,28 +11,82 @@ class BrickStackTest {
     fun testCompositionEmptyStack() {
         val stack = BrickStack()
 
-        assertThat(
-            stack.viewX(), `is`(
-                """
-                 x
-                012
-                ... 2
-                ... 1 z
-                --- 0
-        """.trimIndent()
+        assertViews(
+            stack,
+            """
+                 x         y
+                012       012
+                ... 2     ... 2
+                ... 1 z   ... 1 z
+                --- 0     --- 0
+        """
+        )
+    }
+
+    @Test
+    fun testCompositionOneBrickAlreadyFallen() {
+        val stack = BrickStack(
+            listOf(
+                Brick(1 to 1, 1 to 2, 1 to 1)
             )
         )
 
-        assertThat(
-            stack.viewY(), `is`(
-                """
-                 y
-                012
-                ... 2
-                ... 1 z
-                --- 0
-        """.trimIndent()
+        assertViews(
+            stack,
+            """
+                 x         y
+                012       012
+                ... 2     ... 2
+                .A. 1 z   .AA 1 z
+                --- 0     --- 0
+        """
+        )
+    }
+
+    @Test
+    fun testCompositionTwoBricksAlreadyFallen() {
+        val stack = BrickStack(
+            listOf(
+                Brick(1 to 1, 1 to 2, 1 to 1),
+                Brick(0 to 2, 2 to 2, 2 to 5),
             )
+        )
+
+        assertViews(
+            stack,
+            """
+                 x         y
+                012       012
+                BBB 5     ..B 5
+                BBB 4     ..B 4
+                BBB 3 z   ..B 3 z
+                BBB 2     ..B 2
+                .A. 1     .AA 1
+                --- 0     --- 0
+        """
+        )
+    }
+
+    @Test
+    fun testCompositionTwoBricksAlreadyFallenOverlapping() {
+        val stack = BrickStack(
+            listOf(
+                Brick(1 to 1, 0 to 1, 1 to 1),
+                Brick(0 to 2, 2 to 2, 1 to 4),
+            )
+        )
+
+        assertViews(
+            stack,
+            """
+                 x         y
+                012       012
+                BBB 4     ..B 4
+                BBB 3     ..B 3
+                BBB 2 z   ..B 2 z
+                B?B 1     AAB 1
+                --- 0     --- 0
+        """
         )
     }
 
@@ -86,5 +139,14 @@ class BrickStackTest {
         """.trimIndent()
             )
         )
+    }
+
+    fun assertViews(stack: BrickStack, views: String) {
+        val clean = views.trimIndent().lines().map { it.trimEnd() }
+        val split = clean.map { it.indexOf('z') }.single { it > 0 } + 1
+        val xView = clean.joinToString("\n") { it.substring(0, split).trimEnd() }
+        val yView = clean.joinToString("\n") { it.substring(split).trimEnd() }.trimIndent()
+        assertThat(stack.viewX(), `is`(xView))
+        assertThat(stack.viewY(), `is`(yView))
     }
 }
