@@ -2,7 +2,6 @@ package day22
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.Disabled
 import utils.readInputOneString
 import kotlin.random.Random
 import kotlin.test.Test
@@ -50,7 +49,7 @@ class SolutionTest {
     fun testPart2() {
         assertThat(
             solvePart2(exampleInput),
-            `is`(0)
+            `is`(7)
         )
     }
 
@@ -58,7 +57,7 @@ class SolutionTest {
     fun testPart2RealInput() {
         assertThat(
             solvePart2(readInputOneString("day22/input")),
-            `is`(0)
+            `is`(71002)
         )
     }
 }

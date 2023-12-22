@@ -1,15 +1,19 @@
 package day22
 
+import java.util.LinkedList
+
 class BrickStack(input: List<Brick> = listOf()) {
 
     private val bricks: MutableList<Brick> = mutableListOf()
     private val bricksByTopLevel: MutableMap<Int, MutableSet<Brick>> = mutableMapOf()
+    private val supportedBy = mutableMapOf<Char, Set<Char>>()
+    private val supports = mutableMapOf<Char, MutableSet<Char>>()
 
     init {
         for (floatingBrick in input.sortedBy { it.z.first }) {
             var restingLevel = floatingBrick.z.first
             while (true) {
-                var levelBelow = restingLevel - 1
+                val levelBelow = restingLevel - 1
                 if (levelBelow == 0) {
                     break
                 }
@@ -21,6 +25,17 @@ class BrickStack(input: List<Brick> = listOf()) {
             val restingBrick = floatingBrick.atZ(restingLevel)
             bricks.add(restingBrick)
             bricksByTopLevel.computeIfAbsent(restingBrick.z.last) { mutableSetOf() }.add(restingBrick)
+
+            bricks.forEach { brick ->
+                val supporters = bricksAt(brick.hSection(), brick.z.first - 1)
+                supportedBy[brick.name] = supporters.map { it.name }.toSet()
+            }
+
+            supportedBy.entries.forEach { (supported, supporters) ->
+                supporters.forEach { supporter ->
+                    supports.computeIfAbsent(supporter) { mutableSetOf() }.add(supported)
+                }
+            }
         }
     }
 
@@ -45,23 +60,35 @@ class BrickStack(input: List<Brick> = listOf()) {
     }
 
     fun numDisintegrable(): Long {
-        val supportedBy = mutableMapOf<Brick, Set<Brick>>()
-        bricks.forEach { brick ->
-            val supporters = bricksAt(brick.hSection(), brick.z.first - 1)
-            supportedBy[brick] = supporters
-        }
+        return bricks.count { brick ->
+            val supportedByMe = supports[brick.name] ?: setOf()
+            supportedByMe.all { supportedBy[it]!!.size > 1 }
+        }.toLong()
+    }
 
-        val supports = mutableMapOf<Brick, MutableSet<Brick>>()
-        supportedBy.entries.forEach { (supported, supporters) ->
-            supporters.forEach { supporter ->
-                supports.computeIfAbsent(supporter) { mutableSetOf() }.add(supported)
+    fun countFalls(): Int {
+        return bricks.sumOf { howManyFallIfWeDisintegrate(it.name) }
+    }
+
+    fun howManyFallIfWeDisintegrate(brickName: Char): Int {
+        val disappeared = mutableSetOf<Char>()
+        val newlyDisappeared = LinkedList<Char>()
+
+        disappeared.add(brickName)
+        newlyDisappeared.add(brickName)
+
+        while (newlyDisappeared.isNotEmpty()) {
+            val current = newlyDisappeared.removeFirst()
+            val supported = supports[current] ?: setOf()
+            supported.forEach { brickThatLostSomeSupport ->
+                if (supportedBy[brickThatLostSomeSupport]!!.minus(disappeared).isEmpty()) {
+                    disappeared.add(brickThatLostSomeSupport)
+                    newlyDisappeared.add(brickThatLostSomeSupport)
+                }
             }
         }
 
-        return bricks.count { brick ->
-            val supportedByMe = supports[brick] ?: setOf()
-            supportedByMe.all { supportedBy[it]!!.size > 1 }
-        }.toLong()
+        return disappeared.size - 1
     }
 
     inner class ViewDrawer {

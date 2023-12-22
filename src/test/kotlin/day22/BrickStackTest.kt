@@ -160,6 +160,31 @@ class BrickStackTest {
         )
     }
 
+    @Test
+    fun testFallCountExampleInput() {
+
+        val bricks = parseInput(
+            """
+                1,0,1~1,2,1
+                0,0,2~2,0,2
+                0,2,3~2,2,3
+                0,0,4~0,2,4
+                2,0,5~2,2,5
+                0,1,6~2,1,6
+                1,1,8~1,1,9
+                   """.trimIndent()
+        )
+
+        val stack = BrickStack(bricks)
+        assertThat(stack.howManyFallIfWeDisintegrate('A'), `is`(6))
+        assertThat(stack.howManyFallIfWeDisintegrate('B'), `is`(0))
+        assertThat(stack.howManyFallIfWeDisintegrate('C'), `is`(0))
+        assertThat(stack.howManyFallIfWeDisintegrate('D'), `is`(0))
+        assertThat(stack.howManyFallIfWeDisintegrate('E'), `is`(0))
+        assertThat(stack.howManyFallIfWeDisintegrate('F'), `is`(1))
+        assertThat(stack.howManyFallIfWeDisintegrate('G'), `is`(0))
+    }
+
     private fun assertViews(stack: BrickStack, views: String) {
         val clean = views.trimIndent().lines().map { it.trimEnd() }
         val split = clean.map { it.indexOf('z') }.single { it > 0 } + 1
