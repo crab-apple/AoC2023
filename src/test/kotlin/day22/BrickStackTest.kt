@@ -91,7 +91,26 @@ class BrickStackTest {
     }
 
     @Test
-    @Disabled
+    fun testFallingBrick() {
+        val stack = BrickStack(
+            listOf(
+                Brick(1 to 1, 1 to 1, 2 to 2),
+            )
+        )
+
+        assertViews(
+            stack,
+            """
+                 x         y
+                012       012
+                ... 2     ... 2
+                .A. 1 z   .A. 1 z
+                --- 0     --- 0
+        """
+        )
+    }
+
+    @Test
     fun testCompositionExampleInputStack() {
 
         val bricks = parseInput(
@@ -102,7 +121,7 @@ class BrickStackTest {
                 0,0,4~0,2,4
                 2,0,5~2,2,5
                 0,1,6~2,1,6
-                1,1,8~1,1,9 
+                1,1,8~1,1,9
                    """.trimIndent()
         )
 
@@ -141,7 +160,7 @@ class BrickStackTest {
         )
     }
 
-    fun assertViews(stack: BrickStack, views: String) {
+    private fun assertViews(stack: BrickStack, views: String) {
         val clean = views.trimIndent().lines().map { it.trimEnd() }
         val split = clean.map { it.indexOf('z') }.single { it > 0 } + 1
         val xView = clean.joinToString("\n") { it.substring(0, split).trimEnd() }

@@ -11,6 +11,18 @@ data class Brick(val x: IntRange, val y: IntRange, val z: IntRange) {
                 (y == null || this.y.contains(y)) &&
                 (z == null || this.z.contains(z))
     }
+
+    fun hSection(): List<Pair<Int, Int>> {
+        return x.flatMap { eachX -> y.map { Pair(eachX, it) } }
+    }
+
+    fun atZ(z: Int): Brick {
+        return Brick(
+            this.x,
+            this.y,
+            IntRange(z, z + this.z.last - this.z.first)
+        )
+    }
 }
 
 private fun Pair<Int, Int>.toRange() = IntRange(first, second)

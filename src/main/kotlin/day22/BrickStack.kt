@@ -1,6 +1,30 @@
 package day22
 
-class BrickStack(private val bricks: List<Brick> = listOf()) {
+class BrickStack(input: List<Brick> = listOf()) {
+
+    private val bricks: MutableList<Brick>
+
+    init {
+        bricks = mutableListOf()
+        for (floatingBrick in input) {
+            var restingLevel = floatingBrick.z.first
+            while (true) {
+                var levelBelow = restingLevel - 1
+                if (levelBelow == 0) {
+                    break
+                }
+                if (floatingBrick.hSection().any { occupied(it.first, it.second, levelBelow) }) {
+                    break
+                }
+                restingLevel = levelBelow
+            }
+            bricks.add(floatingBrick.atZ(restingLevel))
+        }
+    }
+
+    private fun occupied(x: Int, y: Int, z: Int): Boolean {
+        return bricks.any { it.contains(x, y, z) }
+    }
 
     fun viewX(): String {
         return ViewDrawer().draw(HorizontalAxis.X)
