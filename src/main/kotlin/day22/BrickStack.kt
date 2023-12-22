@@ -1,6 +1,6 @@
 package day22
 
-import java.util.LinkedList
+import java.util.*
 
 class BrickStack(input: List<Brick> = listOf()) {
 
@@ -44,11 +44,7 @@ class BrickStack(input: List<Brick> = listOf()) {
     }
 
     private fun bricksAt(hSection: HSection, z: Int): Set<Brick> {
-        return hSection.points().mapNotNull { brickAt(it.first, it.second, z) }.toSet()
-    }
-
-    private fun brickAt(x: Int, y: Int, z: Int): Brick? {
-        return (bricksByTopLevel[z] ?: setOf()).singleOrNull { it.contains(x, y, z) }
+        return (bricksByTopLevel[z] ?: setOf()).filter { it.crosses(hSection) }.toSet()
     }
 
     fun viewX(): String {

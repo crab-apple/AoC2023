@@ -11,6 +11,10 @@ data class Brick(val name: Char, val x: IntRange, val y: IntRange, val z: IntRan
 
     fun contains(x: Int, y: Int, z: Int) = crosses(x, y, z)
 
+    fun crosses(hSection: HSection): Boolean {
+        return hSection().intersects(hSection)
+    }
+
     fun crosses(x: Int?, y: Int?, z: Int?): Boolean {
         return (x == null || this.x.contains(x)) &&
                 (y == null || this.y.contains(y)) &&
